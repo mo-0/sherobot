@@ -13,8 +13,7 @@ mostafa_persona = """
 """
 
 # 3. تحديد الموديل بالإصدار الصحيح
-model = genai.GenerativeModel('gemini-2.0-flash', system_instruction=mostafa_persona)
-
+model = genai.GenerativeModel('gemini-2.5-flash', system_instruction=mostafa_persona)
 # 4. واجهة الموقع
 st.title("SheroBot 🍦 - Academic Assistant")
 
