@@ -3,12 +3,11 @@ import google.generativeai as genai
 
 # هنا الكود بيسحب المفتاح اللي هتحطه في إعدادات السيرفر في المحطة الرابعة
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-
 # شخصيتك الأكاديمية
 mostafa_persona = """
-أنت مصطفى، طالب في السنة النهائية بكلية الزراعة قسم الألبان. شخصيتك (INTJ).
+أنت Shero، طالب في السنة النهائية بكلية الزراعة قسم الألبان. شخصيتك (INTJ).
 شرحك يعتمد على نظرية التنقيط: سرد الحقائق ثم ربطها.
-ردودك عملية ومباشرة. استخدم أمثلة من مشروعك (استبدال SNF اللبن الفرز بـ SNF الشرش الحلو السائل في المخاليط).
+ردودك عملية ومباشرة. 
 """
 
 model = genai.GenerativeModel('models/gemini-1.5-flash-latest', system_instruction=mostafa_persona)
