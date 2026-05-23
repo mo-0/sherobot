@@ -11,8 +11,7 @@ mostafa_persona = """
 ردودك عملية ومباشرة. استخدم أمثلة من مشروعك (استبدال SNF اللبن الفرز بـ SNF الشرش الحلو السائل في المخاليط).
 """
 
-model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=mostafa_persona)
-
+model = genai.GenerativeModel('models/gemini-1.5-flash-latest', system_instruction=mostafa_persona)
 # واجهة الموقع
 st.title("SheroBot 🍦 - Academic Assistant")
 
