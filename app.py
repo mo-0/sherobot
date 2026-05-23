@@ -1,23 +1,21 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. إعدادات الصفحة (لازم تكون في البداية)
+# 1. إعدادات الصفحة
 st.set_page_config(
-    page_title="SheroBot | Dairy Assistant",
-    page_icon="🍦",
+    page_title="مساعد مشاريع التخرج 🎓",
+    page_icon="🎓",
     layout="wide"
 )
 
-# 2. حقن أكواد CSS لتعديل الواجهة
+# 2. أكواد CSS للواجهة
 custom_css = """
 <style>
-    /* تغيير لون خلفية رسايل البوت (لون أزرق فاتح كمثال) */
     [data-testid="stChatMessage"]:nth-child(even) {
         background-color: #f0f8ff; 
         border-radius: 10px;
         padding: 10px;
     }
-    /* إخفاء القائمة العلوية والعلامة المائية لـ Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -25,27 +23,29 @@ custom_css = """
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# 3. الشريط الجانبي (Sidebar)
+# 3. الشريط الجانبي (Sidebar) - عام لمشاريع التخرج
 with st.sidebar:
-    st.title("SheroWay Project 🧬")
-    st.write("مساعد أكاديمي مخصص لمهندسي قسم الألبان.")
-    st.info("التركيز الحالي: استبدال SNF اللبن الفرز بـ SNF الشرش الحلو السائل في المخاليط لتقليل التكلفة.")
-    # لو معاك اللوجو اللي صممته، نقدر نضيفه هنا بعدين
-    
-# إعدادات الـ API والشخصية
+    st.title("Graduation Project Assistant 🎓")
+    st.write("مساعد ذكي مبني لمساعدتك في تخطيط، كتابة، وإدارة مشروع تخرجك بأسلوب منهجي.")
+    st.info("التركيز: تنظيم الأفكار، هيكلة البحث، حل مشاكل التيم، وإدارة الوقت.")
+
+# 4. إعدادات المفتاح
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
+# 5. شخصيتك (تم مسح SheroWay والاحتفاظ بالصفات العقلانية)
 mostafa_persona = """
-أنت مصطفى، طالب في السنة النهائية بكلية الزراعة قسم الألبان. شخصيتك (INTJ).
-شرحك يعتمد على نظرية التنقيط: سرد الحقائق ثم ربطها لتكوين نظام منطقي.
-ردودك عملية ومباشرة جداً. استخدم أمثلة من مشروعك (استبدال SNF اللبن الفرز بـ SNF الشرش الحلو السائل).
+أنت مصطفى، خبير في إدارة وتخطيط مشاريع التخرج. شخصيتك تميل لنمط (INTJ).
+تفكيرك تحليلي، استراتيجي، ومنطقي جداً.
+عندما يطلب منك شخص مساعدة في مشروع تخرجه، تعتمد في شرحك على "نظرية التنقيط": تبدأ بسرد الحقائق والنقاط الأساسية المجردة، ثم تربطها لتكوين نظام منطقي وهيكل واضح.
+ردودك عملية، مباشرة جداً، وتدخل في صلب الموضوع فوراً دون مجاملات أو رغي زائد.
+تساعد الطلاب في هيكلة الأبحاث، تقسيم المهام على الفريق، وكتابة تقارير المشاريع (Thesis) بأسلوب علمي.
 لهجتك مصرية.
 """
 
 model = genai.GenerativeModel('gemini-2.5-flash', system_instruction=mostafa_persona)
 
-# الواجهة الأساسية للشات
-st.title("SheroBot 🍦 - Ask the Expert")
+# 6. الواجهة الأساسية
+st.title("مساعد مشاريع التخرج 🎓")
 
 # زرار مسح المحادثة
 if st.button("مسح المحادثة وبدء محادثة جديدة 🔄"):
@@ -59,7 +59,8 @@ for message in st.session_state.chat.history:
     with st.chat_message(role):
         st.markdown(message.parts[0].text)
 
-if prompt := st.chat_input("اكتب سؤالك هنا..."):
+# استقبال الأسئلة
+if prompt := st.chat_input("اكتب سؤالك هنا (مثال: إزاي أقسم شغل العملي على تيم من 8 أشخاص؟)..."):
     with st.chat_message("user"):
         st.markdown(prompt)
     
