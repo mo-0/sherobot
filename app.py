@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
+import urllib.parse  # مخصصة لتنسيق وتوليد روابط الواتساب والإيميل بشكل سليم
 
 # 1. إعدادات الصفحة
 st.set_page_config(page_title="Shero Whey | آيس كريم صحي", page_icon="🍦", layout="wide")
@@ -15,16 +16,21 @@ customer_service_persona = """
 فوائد المنتج: غني بالكالسيوم، البوتاسيوم، الفيتامينات، وصديق للبيئة (Zero Waste).
 الأنواع المتاحة: "مانجو والكركومين" و "فراولة ورمان".
 أسلوبك: ودود، احترافي، مباشر، وتتحدث باللهجة المصرية.
-ردودك يجب أن تكون قصيرة جداً ومقنعة، ووجّه العميل دائماً للذهاب لتبويب "تصفح المنتجات" لإتمام الطلب.
+ردودك يجب أن تكون قصيرة جداً ومقنعة، ووجّه العميل دائماً للذهاب لتبويب "تصفح المنتجات" أو "إدارة وتنفيذ الطلبات السريعة" لإتمام الطلب.
 """
 model = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
 
-# 3. تقسيم الواجهة لتبويبات (Tabs)
-tab1, tab2 = st.tabs(["🛒 تصفح المنتجات والطلب", "💬 المساعد الذكي للاستفسارات"])
+# 3. تقسيم الواجهة لثلاث تبويبات (Tabs)
+tab1, tab2, tab3 = st.tabs([
+    "🛒 تصفح المنتجات والطلب", 
+    "💬 المساعد الذكي للاستفسارات", 
+    "📋 إدارة وتنفيذ الطلبات السريعة"
+])
 
-# التبويب الأول: الويب سايت بتاعك
+# ==========================================
+# التبويب الأول: الويب سايت الأساسي (HTML)
+# ==========================================
 with tab1:
-    # حط كود الـ HTML بتاعك بالكامل هنا بين علامات التنصيص الثلاثية
     html_code = """
     <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -33,314 +39,61 @@ with tab1:
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Shero Whey - آيس كريم صحي طبيعي</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fefaf5;
-            scroll-behavior: smooth;
-        }
-        section {
-            padding: 20px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .logo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1300px;
-            margin: 20px auto 0;
-            padding: 0 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .logo-circle {
-            width: 85px;
-            height: 85px;
-            background-color: #f9e0b0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
-            border: 3px solid #f9a825;
-            transition: transform 0.2s;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .logo-circle img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .logo-placeholder {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #e67e22;
-            text-align: center;
-            line-height: 1.2;
-        }
-        .header-center {
-            text-align: center;
-            flex: 1;
-        }
-        .brand-name {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #e67e22;
-            letter-spacing: 1px;
-        }
-        .product-features {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 30px 0 15px;
-        }
-        .feature {
-            background: white;
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-size: 1.05rem;
-            font-weight: bold;
-            color: #2e7d32;
-            border: 2px solid #4caf50;
-            transition: transform 0.2s;
-            cursor: default;
-        }
-        .product-description-box {
-            background: linear-gradient(125deg, #fff8e7, #fef4e0);
-            border-radius: 36px;
-            padding: 35px 30px;
-            margin: 35px auto;
-            max-width: 1150px;
-            border-right: 8px solid #f9a825;
-        }
-        .benefits-list {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .benefit {
-            background: white;
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: bold;
-            border: 2px solid #f9a825;
-            cursor: default;
-        }
-        .section-title {
-            color: #2c3e50;
-            border-bottom: 4px solid #f9a825;
-            padding-bottom: 12px;
-            margin: 40px 0 30px;
-            font-size: 2rem;
-            text-align: center;
-            display: inline-block;
-        }
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 32px;
-            padding: 25px 20px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-8px);
-        }
-        .image-container {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto 20px;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #fff0df;
-            border: 3px solid #f9a825;
-        }
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        button.primary {
-            background: linear-gradient(95deg, #f39c12, #e67e22);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: 0.25s;
-        }
-        button.primary:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 12px rgba(230,126,34,0.3);
-        }
-        form {
-            background: white;
-            border-radius: 40px;
-            padding: 35px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.08);
-            margin-top: 30px;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 12px 0;
-            border-radius: 34px;
-            border: 2px solid #ffe0b5;
-            background: #fffef7;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        input:focus, textarea:focus, select:focus {
-            border-color: #f39c12;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(243,156,18,0.2);
-        }
-        label.radio-label {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            margin: 12px 0;
-            background: #fef9f0;
-            border-radius: 60px;
-            border: 1px solid #ffddb0;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        label.radio-label input {
-            width: auto;
-            margin-left: 15px;
-            transform: scale(1.2);
-            cursor: pointer;
-        }
-        .rating {
-            direction: ltr;
-            text-align: center;
-            margin: 15px 0;
-        }
-        .rating span {
-            font-size: 2.4rem;
-            cursor: pointer;
-            color: #ddd;
-            margin: 0 4px;
-            transition: 0.1s;
-        }
-        .rating span.active {
-            color: #ffb400;
-        }
-        .message {
-            background: #2e7d32;
-            color: white;
-            padding: 20px;
-            border-radius: 60px;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-        .hidden {
-            display: none;
-        }
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-        .secondary-btn {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        .secondary-btn:hover {
-            transform: scale(1.02);
-            filter: brightness(1.05);
-        }
-        .whatsapp-send {
-            background: #25D366;
-        }
-        .gmail-send {
-            background: #D14836;
-        }
-        .reset-btn {
-            background: #7f8c8d;
-        }
-        footer {
-            background: #1e2a36;
-            color: #eceff1;
-            text-align: center;
-            padding: 45px 20px;
-            margin-top: 70px;
-            border-radius: 40px 40px 0 0;
-        }
-        .contact-info h3 {
-            color: #f9a825;
-            margin-bottom: 20px;
-        }
-        .social-btn {
-            display: inline-block;
-            padding: 12px 28px;
-            border-radius: 60px;
-            margin: 12px 8px;
-            font-weight: bold;
-            text-decoration: none;
-            color: white;
-            transition: 0.2s;
-        }
-        .social-btn:hover {
-            transform: translateY(-2px);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fefaf5; scroll-behavior: smooth; }
+        section { padding: 20px; max-width: 1280px; margin: 0 auto; }
+        .logo-header { display: flex; justify-content: space-between; align-items: center; max-width: 1300px; margin: 20px auto 0; padding: 0 20px; flex-wrap: wrap; gap: 15px; }
+        .logo-circle { width: 85px; height: 85px; background-color: #f9e0b0; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 18px rgba(0,0,0,0.1); border: 3px solid #f9a825; transition: transform 0.2s; overflow: hidden; cursor: pointer; }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-placeholder { font-size: 2.2rem; font-weight: bold; color: #e67e22; text-align: center; line-height: 1.2; }
+        .header-center { text-align: center; flex: 1; }
+        .brand-name { font-size: 2rem; font-weight: bold; color: #e67e22; letter-spacing: 1px; }
+        .product-features { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 30px 0 15px; }
+        .feature { background: white; padding: 12px 28px; border-radius: 50px; font-size: 1.05rem; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50; transition: transform 0.2s; cursor: default; }
+        .product-description-box { background: linear-gradient(125deg, #fff8e7, #fef4e0); border-radius: 36px; padding: 35px 30px; margin: 35px auto; max-width: 1150px; border-right: 8px solid #f9a825; }
+        .benefits-list { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 30px; }
+        .benefit { background: white; padding: 12px 28px; border-radius: 40px; font-weight: bold; border: 2px solid #f9a825; cursor: default; }
+        .section-title { color: #2c3e50; border-bottom: 4px solid #f9a825; padding-bottom: 12px; margin: 40px 0 30px; font-size: 2rem; text-align: center; display: inline-block; }
+        .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .card { background: #fff; border-radius: 32px; padding: 25px 20px; box-shadow: 0 12px 28px rgba(0,0,0,0.08); text-align: center; transition: 0.3s; }
+        .card:hover { transform: translateY(-8px); }
+        .image-container { width: 220px; height: 220px; margin: 0 auto 20px; border-radius: 24px; overflow: hidden; background: #fff0df; border: 3px solid #f9a825; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+        button.primary { background: linear-gradient(95deg, #f39c12, #e67e22); border: none; padding: 14px 28px; border-radius: 50px; font-weight: bold; color: white; cursor: pointer; transition: 0.25s; }
+        button.primary:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(230,126,34,0.3); }
+        form { background: white; border-radius: 40px; padding: 35px; box-shadow: 0 20px 35px rgba(0,0,0,0.08); margin-top: 30px; }
+        input, textarea, select { width: 100%; padding: 14px 18px; margin: 12px 0; border-radius: 34px; border: 2px solid #ffe0b5; background: #fffef7; font-family: inherit; font-size: 1rem; }
+        input:focus, textarea:focus, select:focus { border-color: #f39c12; outline: none; box-shadow: 0 0 0 3px rgba(243,156,18,0.2); }
+        label.radio-label { display: flex; align-items: center; padding: 14px 20px; margin: 12px 0; background: #fef9f0; border-radius: 60px; border: 1px solid #ffddb0; transition: 0.2s; cursor: pointer; }
+        label.radio-label input { width: auto; margin-left: 15px; transform: scale(1.2); cursor: pointer; }
+        .rating { direction: ltr; text-align: center; margin: 15px 0; }
+        .rating span { font-size: 2.4rem; cursor: pointer; color: #ddd; margin: 0 4px; transition: 0.1s; }
+        .rating span.active { color: #ffb400; }
+        .message { background: #2e7d32; color: white; padding: 20px; border-radius: 60px; text-align: center; margin-bottom: 30px; font-weight: bold; }
+        .hidden { display: none; }
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 25px; }
+        .secondary-btn { background: #2c3e50; color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .secondary-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+        .whatsapp-send { background: #25D366; }
+        .gmail-send { background: #D14836; }
+        .reset-btn { background: #7f8c8d; }
+        footer { background: #1e2a36; color: #eceff1; text-align: center; padding: 45px 20px; margin-top: 70px; border-radius: 40px 40px 0 0; }
+        .contact-info h3 { color: #f9a825; margin-bottom: 20px; }
+        .social-btn { display: inline-block; padding: 12px 28px; border-radius: 60px; margin: 12px 8px; font-weight: bold; text-decoration: none; color: white; transition: 0.2s; }
+        .social-btn:hover { transform: translateY(-2px); }
         .whatsapp-footer { background: #25D366; }
         .email-footer { background: #3498db; }
-        .designer-credit {
-            background: #f0f3f5;
-            border-radius: 50px;
-            padding: 12px 18px;
-            display: inline-block;
-            margin-top: 20px;
-            color: #2c3e50;
-        }
+        .designer-credit { background: #f0f3f5; border-radius: 50px; padding: 12px 18px; display: inline-block; margin-top: 20px; color: #2c3e50; }
         .designer-credit span { color: #e67e22; font-weight: bold; }
-        @media (max-width: 680px) {
-            .image-container { width: 160px; height: 160px; }
-            .brand-name { font-size: 1.5rem; }
-        }
+        @media (max-width: 680px) { .image-container { width: 160px; height: 160px; } .brand-name { font-size: 1.5rem; } }
     </style>
 </head>
 <body>
 
 <div class="logo-header">
-    <div class="logo-circle" id="logoLeft">
-        <img id="leftLogoImg" src="" style="display:none;">
-        <div class="logo-placeholder" id="leftPlaceholder">🍦</div>
-    </div>
-    <div class="header-center">
-        <h2><span class="brand-name">Shero Whey</span> ✨ آيس كريم صحي طبيعي</h2>
-    </div>
-    <div class="logo-circle" id="logoRight">
-        <img id="rightLogoImg" src="" style="display:none;">
-        <div class="logo-placeholder" id="rightPlaceholder">🥛</div>
-    </div>
+    <div class="logo-circle" id="logoLeft"><div class="logo-placeholder" id="leftPlaceholder">🍦</div></div>
+    <div class="header-center"><h2><span class="brand-name">Shero Whey</span> ✨ آيس كريم صحي طبيعي</h2></div>
+    <div class="logo-circle" id="logoRight"><div class="logo-placeholder" id="rightPlaceholder">🥛</div></div>
 </div>
 
 <div class="product-features">
@@ -350,294 +103,48 @@ with tab1:
     <div class="feature">♻️ Zero Waste صديق للبيئة</div>
 </div>
 
-<div class="product-description-box">
-    <h3 style="color:#bf360c; text-align:center; font-size:1.8rem;">💪 Shero Whey .. آيس كريم صحي بقوام كريمي 💪</h3>
-    <p style="text-align:center; font-size:1.2rem; line-height:1.8;">
-        ✅ منتجنا <strong>Shero Whey</strong> يُصنع من شرش اللبن الطبيعي الغني بالكالسيوم والبوتاسيوم والفيتامينات الأساسية.
-        يتميز بقوامه الناعم وطعمه اللذيذ، وهو خيار مثالي كحلوى صحية دون أي إضافات ضارة، ويناسب جميع أفراد الأسرة.
-    </p>
-    <div class="benefits-list">
-        <div class="benefit">🥛 غني بالكالسيوم (Ca)</div>
-        <div class="benefit">⚡ غني بالبوتاسيوم (K)</div>
-        <div class="benefit">🍇 فيتامينات B ومضادات أكسدة</div>
-        <div class="benefit">💧 شرش طبيعي (Whey)</div>
-    </div>
-</div>
-
 <section>
     <div style="text-align:center;"><h2 class="section-title">🍨 منتجات Shero Whey</h2></div>
     <div class="products">
-        <!-- منتج المانجو والكركومين (تم تغيير الكركم إلى الكركومين) -->
         <div class="card">
             <div class="product-label" style="background:#e67e22; display:inline-block; padding:6px 20px; border-radius:40px; color:white;">⭐ الأكثر طلباً</div>
-            <div class="image-container"><img src="file:///C:/Users/Elnoor-8/Desktop/New%20folder%20(2)/%D9%85%D8%A7%D9%86%D8%AC%D8%A7.png" alt="مانجو وكركومين" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><rect width=\"400\" height=\"400\" fill=\"%23ffd966\"/><text x=\"200\" y=\"220\" font-size=\"40\" text-anchor=\"middle\" fill=\"%23b45f1b\">🥭</text><text x=\"200\" y=\"280\" font-size=\"22\" text-anchor=\"middle\" fill=\"%23855a1f\">مانجو</text></svg>'"></div>
+            <div class="image-container"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%23ffd966"/><text x="50%" y="55%" font-size="60" text-anchor="middle">🥭</text></svg></div>
             <h3 style="color:#bf5b1c;">Shero Whey مانجو والكركومين</h3>
-            <p>مزيج فريد من شرش اللبن الطبيعي مع نكهة المانجو الغنية ومستخلص الكركومين النشط، غني بمضادات الأكسدة والفيتامينات.</p>
-            <button class="primary" onclick="selectProduct('Shero Whey مانجو والكركومين')">🛒 اطلب الآن</button>
+            <p>مزيج فريد من شرش اللبن الطبيعي مع نكهة المانجو ومستخلص الكركومين النشط.</p>
         </div>
-        <!-- منتج الفراولة والرمان -->
         <div class="card">
             <div class="product-label" style="background:#e67e22; display:inline-block; padding:6px 20px; border-radius:40px; color:white;">🌟 جديد</div>
-            <div class="image-container"><img src="file:///C:/Users/Elnoor-8/Desktop/New%20folder%20(2)/%D9%85%D8%A7%D9%86%D8%AC%D8%A7.png" alt="فراولة ورمان" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><rect width=\"400\" height=\"400\" fill=\"%23f9b7b7\"/><text x=\"200\" y=\"220\" font-size=\"42\" text-anchor=\"middle\" fill=\"%23942b2b\">🍓</text><text x=\"200\" y=\"280\" font-size=\"22\" text-anchor=\"middle\" fill=\"%23832e2e\">فراولة</text></svg>'"></div>
+            <div class="image-container"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%23f9b7b7"/><text x="50%" y="55%" font-size="60" text-anchor="middle">🍓</text></svg></div>
             <h3 style="color:#bf5b1c;">Shero Whey فراولة ورمان</h3>
-            <p>تركيبة غنية وفاخرة من شرش اللبن الطبيعي، ممزوجة بالفراولة والرمان الغنيين بالبوليفينولات ومضادات الأكسدة الطبيعية.</p>
-            <button class="primary" onclick="selectProduct('Shero Whey فراولة ورمان')">🛒 اطلب الآن</button>
+            <p>تركيبة غنية وفاخرة ممزوجة بالفراولة والرمان الغنيين بمضادات الأكسدة الطبيعية.</p>
         </div>
     </div>
 </section>
 
-<section id="buy">
-    <h2 class="section-title">📋 إتمام عملية الشراء</h2>
-    <div id="successMessage" class="message hidden">✅ تم فتح نافذة الإرسال! أرسل الرسالة لتأكيد الطلب.</div>
-
-    <form id="orderForm" onsubmit="event.preventDefault();">
-        <p style="font-weight:bold; font-size:1.2rem;">🍦 اختر النكهة المفضلة:</p>
-        <label class="radio-label"><input type="radio" name="المنتج" value="Shero Whey مانجو والكركومين" required> <span>🥭 Shero Whey مانجو والكركومين</span></label>
-        <label class="radio-label"><input type="radio" name="المنتج" value="Shero Whey فراولة ورمان" required> <span>🍓 Shero Whey فراولة ورمان</span></label>
-        
-        <input type="text" name="الاسم" id="orderName" placeholder="👤 الاسم الكامل (ثلاثي)" required>
-        <input type="tel" name="الهاتف" id="orderPhone" placeholder="📱 رقم الهاتف للتواصل (مثال: 010xxxxxxxx)" required>
-        <input type="text" name="العنوان" id="orderAddress" placeholder="🏠 العنوان بالتفصيل (المدينة، الحي، الشارع، رقم المنزل)" required>
-        
-        <select name="الكمية" id="orderQuantity" required>
-            <option value="" disabled selected>🔢 اختر الكمية المطلوبة</option>
-            <option value="1">كوب واحد</option>
-            <option value="2">كوبان</option>
-            <option value="3">3 أكواب</option>
-            <option value="4">4 أكواب</option>
-            <option value="5+">5 أكواب فأكثر</option>
-        </select>
-        
-        <textarea name="ملاحظات" id="orderNotes" placeholder="💬 ملاحظات إضافية (موعد التوصيل المناسب، تعليمات خاصة، أو بريدك الإلكتروني)"></textarea>
-        
-        <p style="font-weight:bold; margin-top:20px;">⭐ قيم تجربة التسوق من 1 إلى 5 نجوم:</p>
-        <div class="rating" id="rating">
-            <span onclick="setRate(1)">☆</span><span onclick="setRate(2)">☆</span>
-            <span onclick="setRate(3)">☆</span><span onclick="setRate(4)">☆</span><span onclick="setRate(5)">☆</span>
-        </div>
-        <input type="hidden" id="rateValue" name="التقييم" value="0">
-    </form>
-
-    <div class="action-buttons">
-        <button class="secondary-btn reset-btn" onclick="resetOrderForm()">🔄 طلب جديد / إعادة تعيين</button>
-        <button class="secondary-btn whatsapp-send" onclick="sendViaWhatsApp()">📱 إرسال الطلب عبر واتساب</button>
-        <button class="secondary-btn gmail-send" onclick="sendViaGmail()">📧 إرسال الطلب عبر Gmail</button>
-    </div>
-    <p style="font-size:13px; color:#666; text-align:center; margin-top:20px;">
-        ※ سيتم فتح واتساب أو جيميل مع رسالة منسقة تحتوي على بيانات طلبك، فقط اضغط على إرسال.
-    </p>
-</section>
-
-<footer>
-    <div class="contact-info">
-        <h3>📞 تواصل معنا</h3>
-        <p>📱 واتساب: +20 10 90416662</p>
-        <p>📧 إيميل: sheroway78@gmail.com</p>
-        <p>⏰ ساعات العمل: يومياً من 9 صباحاً حتى 10 مساءً</p>
-        <div>
-            <a href="https://wa.me/201090416662?text=مرحباً، أود الاستفسار عن منتجات Shero Whey" target="_blank" class="social-btn whatsapp-footer">💬 تواصل واتساب</a>
-            <a href="mailto:sheroway78@gmail.com?subject=استفسار عن Shero Whey" class="social-btn email-footer">📩 إرسال استفسار</a>
-        </div>
-    </div>
-    <div class="designer-credit">🧑‍🍳 صنع وتصميم <span>المهندس كريم محمود نصار</span> | Shero Whey</div>
-    <div class="copyright">© 2025 جميع الحقوق محفوظة | Shero Whey - آيس كريم صحي طبيعي - غني بالشرش والكالسيوم</div>
-</footer>
-
-<script>
-    // دالة لتحديد المنتج عند الضغط على زر "اطلب الآن"
-    function selectProduct(name) {
-        const radios = document.querySelectorAll('input[name="المنتج"]');
-        radios.forEach(radio => {
-            if (radio.value === name) {
-                radio.checked = true;
-                const parentLabel = radio.closest('.radio-label');
-                if (parentLabel) {
-                    document.querySelectorAll('.radio-label').forEach(lbl => lbl.style.background = "#fef9f0");
-                    parentLabel.style.background = "#e8f5e9";
-                }
-            }
-        });
-        document.getElementById('buy').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // دالة لتحديد عدد النجوم
-    function setRate(n) {
-        const stars = document.querySelectorAll('#rating span');
-        stars.forEach((s, i) => {
-            s.textContent = i < n ? '★' : '☆';
-            if (i < n) s.classList.add('active');
-            else s.classList.remove('active');
-        });
-        document.getElementById('rateValue').value = n;
-    }
-
-    // دالة لإعادة تعيين النموذج بالكامل
-    function resetOrderForm() {
-        const form = document.getElementById('orderForm');
-        form.reset();
-        document.getElementById('orderName').value = '';
-        document.getElementById('orderPhone').value = '';
-        document.getElementById('orderAddress').value = '';
-        document.getElementById('orderQuantity').selectedIndex = 0;
-        document.getElementById('orderNotes').value = '';
-        const stars = document.querySelectorAll('#rating span');
-        stars.forEach(s => { s.textContent = '☆'; s.classList.remove('active'); });
-        document.getElementById('rateValue').value = '0';
-        document.querySelectorAll('.radio-label').forEach(lbl => lbl.style.background = "#fef9f0");
-        document.getElementById('successMessage').classList.add('hidden');
-        document.getElementById('buy').scrollIntoView({ behavior: 'smooth' });
-        alert("✅ تم مسح جميع البيانات بنجاح، يمكنك إدخال طلب جديد.");
-    }
-
-    // دالة لجلب بيانات الطلب
-    function getOrderData() {
-        const product = document.querySelector('input[name="المنتج"]:checked');
-        const name = document.getElementById('orderName')?.value.trim();
-        const phone = document.getElementById('orderPhone')?.value.trim();
-        const address = document.getElementById('orderAddress')?.value.trim();
-        const quantity = document.getElementById('orderQuantity')?.value;
-        const notes = document.getElementById('orderNotes')?.value.trim();
-        const rating = document.getElementById('rateValue')?.value || "0";
-        return { product, name, phone, address, quantity, notes, rating };
-    }
-
-    // إرسال عبر واتساب مع تنسيق رائع
-    window.sendViaWhatsApp = function() {
-        const data = getOrderData();
-        if (!data.product) { alert("⚠️ الرجاء اختيار المنتج أولاً"); return; }
-        if (!data.name || !data.phone || !data.address) { alert("⚠️ الرجاء إكمال البيانات الأساسية: الاسم، الهاتف، العنوان"); return; }
-        
-        let message = `🛒 *طلب جديد من Shero Whey* 🛒\n\n`;
-        message += `👤 الاسم: ${data.name}\n`;
-        message += `📱 الهاتف: ${data.phone}\n`;
-        message += `🏠 العنوان: ${data.address}\n`;
-        message += `🍦 المنتج: ${data.product.value}\n`;
-        message += `🔢 الكمية: ${data.quantity}\n`;
-        message += `⭐ التقييم: ${data.rating} من 5 نجوم\n\n`;
-        message += `📝 ملاحظات إضافية:\n${data.notes || "لا توجد ملاحظات"}\n\n`;
-        message += `──────────────────────\nيرجى تأكيد الطلب، شكراً لكم! 🙏`;
-        
-        const encodedMsg = encodeURIComponent(message);
-        window.open(`https://wa.me/201090416662?text=${encodedMsg}`, '_blank');
-        
-        const successDiv = document.getElementById('successMessage');
-        successDiv.innerHTML = "✅ تم فتح تطبيق واتساب! قم بإرسال الرسالة لتأكيد الطلب.";
-        successDiv.classList.remove('hidden');
-        setTimeout(() => {
-            successDiv.classList.add('hidden');
-        }, 5000);
-    };
-
-    // إرسال عبر جيميل مع تنسيق احترافي وجميل
-    window.sendViaGmail = function() {
-        const data = getOrderData();
-        if (!data.product) { alert("⚠️ الرجاء اختيار المنتج أولاً"); return; }
-        if (!data.name || !data.phone || !data.address) { alert("⚠️ الرجاء إكمال البيانات الأساسية: الاسم، الهاتف، العنوان"); return; }
-        
-        const subject = `طلب شراء جديد - Shero Whey من ${data.name}`;
-        
-        let body = "";
-        body += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        body += "             🍦 طلب جديد - Shero Whey 🍦\n";
-        body += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-        body += "👤 الاسم الكامل: " + data.name + "\n";
-        body += "📱 رقم الهاتف: " + data.phone + "\n";
-        body += "🏠 العنوان بالتفصيل: " + data.address + "\n\n";
-        body += "🍦 المنتج المطلوب: " + data.product.value + "\n";
-        body += "🔢 الكمية: " + data.quantity + "\n";
-        body += "⭐ تقييم العميل: " + data.rating + " من 5 نجوم\n\n";
-        body += "📝 ملاحظات إضافية:\n";
-        body += "────────────────────────────────────────────\n";
-        body += (data.notes || "لا توجد ملاحظات") + "\n";
-        body += "────────────────────────────────────────────\n\n";
-        body += "يرجى التواصل مع العميل لتأكيد الطلب وتفاصيل التوصيل.\n";
-        body += "شكراً لاختياركم Shero Whey! 🌟\n";
-        
-        window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=sheroway78@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-        
-        const successDiv = document.getElementById('successMessage');
-        successDiv.innerHTML = "✅ تم فتح Gmail! اضغط على زر الإرسال لإتمام الطلب.";
-        successDiv.classList.remove('hidden');
-        setTimeout(() => {
-            successDiv.classList.add('hidden');
-        }, 5000);
-    };
-
-    // دالة إعداد الشعارات (تترك للمستخدم)
-    function setupLogos() {
-        const leftLogoUrl = "";   // ضع رابط صورة اللوجو الأيمن هنا إن وجد
-        const rightLogoUrl = "";  // ضع رابط صورة اللوجو الأيسر هنا إن وجد
-        const leftImg = document.getElementById('leftLogoImg');
-        const rightImg = document.getElementById('rightLogoImg');
-        const leftPlace = document.getElementById('leftPlaceholder');
-        const rightPlace = document.getElementById('rightPlaceholder');
-        if (leftLogoUrl && leftLogoUrl.trim() !== "") {
-            leftImg.src = leftLogoUrl;
-            leftImg.style.display = "block";
-            leftPlace.style.display = "none";
-        } else {
-            leftImg.style.display = "none";
-            leftPlace.style.display = "flex";
-        }
-        if (rightLogoUrl && rightLogoUrl.trim() !== "") {
-            rightImg.src = rightLogoUrl;
-            rightImg.style.display = "block";
-            rightPlace.style.display = "none";
-        } else {
-            rightImg.style.display = "none";
-            rightPlace.style.display = "flex";
-        }
-    }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        setupLogos();
-        // تحسين تجربة التفاعل مع النجوم
-        const starsSpans = document.querySelectorAll('#rating span');
-        starsSpans.forEach((star, idx) => {
-            star.addEventListener('mouseover', function() {
-                starsSpans.forEach((s, i) => {
-                    if (i <= idx) s.style.color = '#ffb400';
-                    else s.style.color = '#ddd';
-                });
-            });
-            star.addEventListener('mouseout', function() {
-                const current = parseInt(document.getElementById('rateValue').value) || 0;
-                starsSpans.forEach((s, i) => {
-                    if (i < current) s.style.color = '#ffb400';
-                    else s.style.color = '#ddd';
-                });
-            });
-        });
-    });
-</script>
 </body>
 </html>
     """
-    
-    # الكود ده بيعرض الويب سايت بتاعك جوه Streamlit بكامل الشاشة
-    components.html(html_code, height=850, scrolling=True)
+    components.html(html_code, height=650, scrolling=True)
 
+# ==========================================
 # التبويب الثاني: البوت (البانل الخاص بالاستفسارات)
+# ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - أقدر أساعدك إزاي؟")
     st.info("اسألني عن مكونات الآيس كريم، فوايده، أو إزاي تطلب.")
     
-    # زرار مسح المحادثة
     if st.button("🔄 محادثة جديدة", key="reset_btn"):
         st.session_state.chat = model.start_chat(history=[])
         st.rerun()
 
-    # الذاكرة
     if "chat" not in st.session_state:
         st.session_state.chat = model.start_chat(history=[])
 
-    # عرض الرسايل
     for message in st.session_state.chat.history:
         role = "assistant" if message.role == "model" else "user"
         with st.chat_message(role):
             st.markdown(message.parts[0].text)
 
-    # استقبال الأسئلة
     if prompt := st.chat_input("اكتب استفسارك هنا..."):
         with st.chat_message("user"):
             st.markdown(prompt)
@@ -648,3 +155,71 @@ with tab2:
                 st.markdown(response.text)
         except Exception as e:
             st.error(f"حصلت مشكلة في الاتصال: {e}")
+
+# ==========================================
+# التبويب الثالث: لوحة التحكم والطلب السريع (Streamlit Native)
+# ==========================================
+with tab3:
+    st.markdown("### 📋 نموذج إتمام الشراء السريع المباشر")
+    st.write("إذا واجهت أي مشكلة في إرسال الطلب من التبويب الأول، يمكنك ملء الاستمارة هنا والتنفيذ فوراً:")
+
+    # بناء الاستمارة عناصر بايثون أصلية
+    st.markdown("---")
+    product_selection = st.radio(
+        "🍦 اختر النكهة المفضلة:",
+        ["Shero Whey مانجو والكركومين", "Shero Whey فراولة ورمان"],
+        index=0
+    )
+    
+    customer_name = st.text_input("👤 الاسم الكامل (ثلاثي):", placeholder="اكتب اسمك هنا")
+    customer_phone = st.text_input("📱 رقم الهاتف للتواصل:", placeholder="010xxxxxxxx")
+    customer_address = st.text_area("🏠 العنوان بالتفصيل:", placeholder="المدينة، الحي، الشارع، رقم المنزل")
+    
+    order_quantity = st.selectbox(
+        "🔢 اختر الكمية المطلوبة:",
+        ["كوب واحد", "كوبان", "3 أكواب", "4 أكواب", "5 أكواب فأكثر"]
+    )
+    
+    order_notes = st.text_area("💬 ملاحظات إضافية:", placeholder="موعد التوصيل المناسب أو تعليمات خاصة")
+    customer_rating = st.slider("⭐ قيم تجربة التسوق من 1 إلى 5 نجوم:", 1, 5, 5)
+
+    # تجهيز وتنسيق نص الرسالة الجاهزة للإرسال
+    msg_template = f"""🛒 *طلب جديد من Shero Whey* 🛒
+
+👤 الاسم: {customer_name}
+📱 الهاتف: {customer_phone}
+🏠 العنوان: {customer_address}
+🍦 المنتج: {product_selection}
+🔢 الكمية: {order_quantity}
+⭐ التقييم: {customer_rating} من 5 نجوم
+
+ 📝 ملاحظات إضافية:
+{order_notes if order_notes.strip() else "لا توجد ملاحظات"}
+──────────────────────
+يرجى تأكيد الطلب، شكراً لكم! 🙏"""
+
+    # تحويل النص لـ URL encoded للروابط الخارجية
+    encoded_msg = urllib.parse.quote(msg_template)
+    
+    # روابط التنفيذ
+    whatsapp_url = f"https://wa.me/201090416662?text={encoded_msg}"
+    
+    email_subject = urllib.parse.quote(f"طلب شراء جديد - Shero Whey من {customer_name}")
+    email_body = urllib.parse.quote(msg_template)
+    gmail_url = f"https://mail.google.com/mail/?view=cm&fs=1&to=sheroway78@gmail.com&su={email_subject}&body={email_body}"
+
+    # أزرار الإجراءات الفورية
+    st.markdown("#### 🚀 أزرار التنفيذ السريع:")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # زرار يفتح الواتساب مباشرة بالرسالة المكتوبة فوق
+        st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True)
+        
+    with col2:
+        # زرار يفتح الجيميل مباشرة ببيانات الإيميل المكتوبة
+        st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True)
+
+    # ميزة إضافية: عرض شكل الفاتورة أو الرسالة قبل الإرسال
+    with st.expander("👀 معاينة نص الرسالة اللي هتروح للدعم الفني"):
+        st.code(msg_template, language="markdown")
