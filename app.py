@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. حقن أكواد CSS لواجهة Modern (خطوط، ظلال، وتصميم احترافي)
+# 2. حقن أكواد CSS لواجهة Modern (أحمر للمستخدم، أخضر للمساعد)
 custom_css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
@@ -17,10 +17,20 @@ custom_css = """
         font-family: 'Cairo', sans-serif !important;
     }
     
-    /* تصميم رسايل الشات (كروت بظلال) */
-    [data-testid="stChatMessage"] {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+    /* تصميم رسالة المستخدم (مربع أحمر فاتح) */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+        background-color: #ffebee !important; 
+        border: 1px solid #ffcdd2 !important;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* تصميم رسالة البوت (مربع أخضر فاتح) */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+        background-color: #e8f5e9 !important;
+        border: 1px solid #c8e6c9 !important;
         border-radius: 12px;
         padding: 15px;
         margin-bottom: 15px;
