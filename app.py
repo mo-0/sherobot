@@ -187,7 +187,7 @@ with tab1:
             st.rerun()
 
 # ==========================================
-# التبويب الثاني: البوت المطور (جيمناي أساسي 🔄 ميتا لاما احتياطي)
+# التبويب الثاني: البوت المطور (نسخة الـ Bulletproof ضد التعليق)
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
@@ -199,7 +199,7 @@ with tab2:
     if "chat" not in st.session_state:
         st.session_state.chat = model_gemini.start_chat(history=[])
 
-    # عرض تاريخ الشات القديم ونظافته من الأكواد المخفية
+    # عرض تاريخ الشات القديم وتنظيفه من الأكواد المخفية
     for message in st.session_state.chat.history:
         role = "assistant" if message.role == "model" else "user"
         clean_text = re.sub(r'\[SET_ORDER:.*?\]', '', message.parts[0].text)
@@ -217,14 +217,14 @@ with tab2:
             response = st.session_state.chat.send_message(prompt)
             raw_text = response.text
             
-        # ─── 2. في حالة حدوث أي مشكلة في جوجل، التحويل التلقائي لـ مـيـتـا لاما (الاحتياطي) ───
+        # ─── 2. خطة الدعم الاحتياطية الفورية (Meta Llama) ───
         except Exception as e:
             if client_meta is not None:
-                st.toast("⚠️ سيرفر جوجل مشغول، تم التحويل للمساعد الاحتياطي (Meta Llama) تلقائياً!")
+                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي...")
                 try:
-                    # استدعاء نموذج لاما 3 من ميتا عبر Groq
+                    # استخدام اسم الموديل المتاح والنشط حالياً لايف على Groq
                     meta_response = client_meta.chat.completions.create(
-                      model="llama-3.3-70b-versatile",
+                        model="llama-3.3-70b-versatile",
                         messages=[
                             {"role": "system", "content": customer_service_persona},
                             {"role": "user", "content": prompt}
@@ -232,16 +232,17 @@ with tab2:
                     )
                     raw_text = meta_response.choices[0].message.content
                     
-                    # مزامنة الرد اليدوي في تاريخ شات جيمناي عشان السياق ميفصلش لما يرجع يشتغل
+                    # مزامنة الرد في تاريخ شات جيمناي للحفاظ على السياق
                     st.session_state.chat.history.append(genai.types.Content(role="user", parts=[genai.types.Part.from_text(prompt)]))
                     st.session_state.chat.history.append(genai.types.Content(role="model", parts=[genai.types.Part.from_text(raw_text)]))
                 except Exception as meta_err:
-                    st.error(f"عذراً، هناك مشكلة عامة في الاتصال بالسيرفرات: {meta_err}")
+                    raw_text = "⚠️ عذراً يا فندم، ضغط السيرفرات عالي جداً حالياً. لكن تقدر تتصفح المنتجات وتطلب أوتوماتيك من التبويب الأول أو الثالث بكل سهولة وسنتواصل معك فوراً! 🍦"
             else:
-                st.error("سيرفر جوجل غير متاح، ومفتاح السيرفر الاحتياطي غير مهيأ بعد في الـ Secrets.")
+                raw_text = "⚠️ خط اتصال السيرفرات مشغول حالياً، فضلاً استخدم نموذج الطلب السريع في التبويب الثالث لإتمام طلبك مباشرة!"
 
-        # ─── 3. معالجة الرد النهائي وتحديث السلة (سواء خرج من جوجل أو ميتا) ───
+        # ─── 3. عرض الرد النهائي وتحديث السلة لايف ───
         if raw_text:
+            # استخراج النية والكميات بـ Regex
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
@@ -254,6 +255,7 @@ with tab2:
                     st.session_state.qty_s = s_qty
                 st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً!")
 
+            # تنظيف النص النهائي من التاجز المخفية وعرضه
             final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             with st.chat_message("assistant"):
                 st.markdown(final_display_text)
