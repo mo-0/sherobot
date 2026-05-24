@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 import google.generativeai as genai
 import urllib.parse  # مخصصة لتنسيق وتوليد روابط الواتساب والإيميل بشكل سليم
 import re  # لمسح واستخراج أكواد الطلبات التلقائية من البوت
+from openai import OpenAI  # 1. استيراد المكتبة الخاصة بالنموذج الاحتياطي (ميتا لاما)
 
 # ==========================================
 # 1. إعدادات الصفحة وجعلها متناسقة مع الـ Dark Mode
@@ -52,7 +53,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# تهيئة الـ الـ Session States للتحكم المباشر في الـ Widgets عن طريق الـ Keys
+# تهيئة الـ Session States للتحكم المباشر في الـ Widgets عن طريق الـ Keys
 if "want_m" not in st.session_state:
     st.session_state.want_m = False
 if "qty_m" not in st.session_state:
@@ -63,8 +64,9 @@ if "qty_s" not in st.session_state:
     st.session_state.qty_s = 1
 
 # ==========================================
-# 2. إعدادات البوت وتطوير الـ Persona للمزامنة الذكية
+# 2. إعدادات الـ APIs (جوجل + ميتا لاما)
 # ==========================================
+# إعداد السيرفر الأساسي (جيمناي من جوجل)
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 customer_service_persona = """
@@ -77,14 +79,21 @@ If the user explicitly mentions they want to order a specific flavor and quantit
 [SET_ORDER: MANGO=X, STRAWBERRY=Y]
 Replace X and Y with the integer quantities requested. If a flavor is not ordered, set it to 0.
 Example: If they want 2 mango, append: [SET_ORDER: MANGO=2, STRAWBERRY=0]
-Example: If they want 1 strawberry and 4 mango, append: [SET_ORDER: MANGO=4, STRAWBERRY=1]
 
 Language Rules:
 1. If asked in Arabic, reply in friendly Egyptian Arabic.
 2. If asked in English, reply in perfect English.
 Always be polite and let them know that you have prepared their cart in the third tab!
 """
-model = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
+model_gemini = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
+
+# 2. إعداد السيرفر الاحتياطي (ميتا لاما عبر منصة Groq) باستخدام المفتاح اللي ضفناه في السيكرتس
+client_meta = None
+if "GROQ_API_KEY" in st.secrets:
+    client_meta = OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=st.secrets["GROQ_API_KEY"]
+    )
 
 # 3. تقسيم الواجهة لثلاث تبويبات (Tabs)
 tab1, tab2, tab3 = st.tabs([
@@ -97,7 +106,6 @@ tab1, tab2, tab3 = st.tabs([
 # التبويب الأول: الويب سايت التفاعلي (Native Streamlit Elements)
 # ==========================================
 with tab1:
-    # --- الهيدر العلوي ---
     col_brand, col_logo = st.columns([4, 1])
     with col_brand:
         st.markdown("""
@@ -112,7 +120,6 @@ with tab1:
         except Exception:
             st.markdown("<h1 style='text-align: center;'>🍦</h1>", unsafe_allow_html=True)
 
-    # المميزات السريعة
     st.markdown("""
     <div style='display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; direction: rtl;'>
         <span style='background: #1e1e1e; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #4caf50; border: 2px solid #4caf50;'>🌿 شرش اللبن الطبيعي</span>
@@ -122,7 +129,6 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-    # --- إعداد بيانات الـ Carousel ---
     slides = [
         {"image": "https://images.unsplash.com/photo-1560512823-829485b8bf24?w=600&auto=format&fit=crop&q=80", "title": "ابتكار طعم المانجو والكركمين 🥭", "description": "مزيج فريد ومدروس علمياً يجمع بين فوائد شرش اللبن الوظيفي ونكهة المانجو الطبيعية، معزز بمستخلص الكركمين النشط كمضاد أكسدة طبيعي يدعم صحتك وقوام الآيس كريم."},
         {"image": "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=600&auto=format&fit=crop&q=80", "title": "SheroWhey فراولة ورمان 🍓", "description": "الابتكار في كل ملعقة! استمتع بالانتعاش الحقيقي والمذاق المتوازن مع توليفة مبتكرة تجمع بين حلاوة الفراولة الطبيعية ونكهة الرمان الغنية. تم تصنيعه بقاعدة مميزة من الشرش السائل الطبيعي لتقديم قوام ناعم وخفيف ومثالي."},
@@ -132,10 +138,8 @@ with tab1:
     if 'current_slide' not in st.session_state:
         st.session_state.current_slide = 0
 
-    def next_slide():
-        st.session_state.current_slide = (st.session_state.current_slide + 1) % len(slides)
-    def prev_slide():
-        st.session_state.current_slide = (st.session_state.current_slide - 1) % len(slides)
+    def next_slide(): st.session_state.current_slide = (st.session_state.current_slide + 1) % len(slides)
+    def prev_slide(): st.session_state.current_slide = (st.session_state.current_slide - 1) % len(slides)
 
     hero_col1, hero_col2 = st.columns([1.2, 1])
     current_data = slides[st.session_state.current_slide]
@@ -159,7 +163,6 @@ with tab1:
 
     st.markdown("<br><hr><br>", unsafe_allow_html=True)
 
-    # --- القسم السفلي: المنتجات والتحليلات التغذوية ---
     st.markdown("<h2 style='text-align: center; color: #ffffff;'>🍨 منتجاتنا المتوفرة والتحليلات التغذوية</h2>", unsafe_allow_html=True)
     prod_col1, prod_col2 = st.columns(2)
     
@@ -183,21 +186,20 @@ with tab1:
             st.toast("🎯 تم إضافة الفراولة لعربتك!")
             st.rerun()
 
-    st.markdown("<br><br><div style='text-align: center; color: #888888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px;'>© octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey</div>", unsafe_allow_html=True)
-
 # ==========================================
-# التبويب الثاني: البوت المطور (مع ميزة المزامنة الإجبارية الفورية)
+# التبويب الثاني: البوت المطور (جيمناي أساسي 🔄 ميتا لاما احتياطي)
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
     
     if st.button("🔄 محادثة جديدة / New Chat", key="reset_chat_btn"):
-        st.session_state.chat = model.start_chat(history=[])
+        st.session_state.chat = model_gemini.start_chat(history=[])
         st.rerun()
 
     if "chat" not in st.session_state:
-        st.session_state.chat = model.start_chat(history=[])
+        st.session_state.chat = model_gemini.start_chat(history=[])
 
+    # عرض تاريخ الشات القديم ونظافته من الأكواد المخفية
     for message in st.session_state.chat.history:
         role = "assistant" if message.role == "model" else "user"
         clean_text = re.sub(r'\[SET_ORDER:.*?\]', '', message.parts[0].text)
@@ -208,42 +210,58 @@ with tab2:
         with st.chat_message("user"):
             st.markdown(prompt)
         
+        raw_text = ""
+        
+        # ─── 1. محاولة إرسال الرسالة لـ جـيـمـنـاي (الأساسي) ───
         try:
             response = st.session_state.chat.send_message(prompt)
             raw_text = response.text
             
-            # مسح واستخراج كود المزامنة بـ Regex
+        # ─── 2. في حالة حدوث أي مشكلة في جوجل، التحويل التلقائي لـ مـيـتـا لاما (الاحتياطي) ───
+        except Exception as e:
+            if client_meta is not None:
+                st.toast("⚠️ سيرفر جوجل مشغول، تم التحويل للمساعد الاحتياطي (Meta Llama) تلقائياً!")
+                try:
+                    # استدعاء نموذج لاما 3 من ميتا عبر Groq
+                    meta_response = client_meta.chat.completions.create(
+                        model="llama3-8b-8192",
+                        messages=[
+                            {"role": "system", "content": customer_service_persona},
+                            {"role": "user", "content": prompt}
+                        ]
+                    )
+                    raw_text = meta_response.choices[0].message.content
+                    
+                    # مزامنة الرد اليدوي في تاريخ شات جيمناي عشان السياق ميفصلش لما يرجع يشتغل
+                    st.session_state.chat.history.append(genai.types.Content(role="user", parts=[genai.types.Part.from_text(prompt)]))
+                    st.session_state.chat.history.append(genai.types.Content(role="model", parts=[genai.types.Part.from_text(raw_text)]))
+                except Exception as meta_err:
+                    st.error(f"عذراً، هناك مشكلة عامة في الاتصال بالسيرفرات: {meta_err}")
+            else:
+                st.error("سيرفر جوجل غير متاح، ومفتاح السيرفر الاحتياطي غير مهيأ بعد في الـ Secrets.")
+
+        # ─── 3. معالجة الرد النهائي وتحديث السلة (سواء خرج من جوجل أو ميتا) ───
+        if raw_text:
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
                 s_qty = int(match.group(2))
-                
-                # تحديث قيم الـ Session State مباشرة قبل الـ Rerun لإجبار بايثون على تحديث الـ UI لايف
                 if m_qty > 0:
                     st.session_state.want_m = True
                     st.session_state.qty_m = m_qty
                 if s_qty > 0:
                     st.session_state.want_s = True
                     st.session_state.qty_s = s_qty
-                
-                st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً بناءً على كلامك مع البوت!")
+                st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً!")
 
             final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
-            
             with st.chat_message("assistant"):
                 st.markdown(final_display_text)
             
-            # عمل Rerun فوراً عشان التبويب الثالث يقرأ التحديث الجديد وميبقاش متأخر خطوة
             st.rerun()
-                
-        except Exception as e:
-            st.error(f"حصلت مشكلة في الاتصال: {e}")
 
 # ==========================================
-# التبويب الثالث: لوحة التحكم والطلب السريع (إصلاح مشكلة الـ UI اللحظي)
-# ==========================================
-# ==========================================
-# التبويب الثالث: لوحة التحكم والطلب السريع (نسخة نظيفة بدون مربعات فاضية)
+# التبويب الثالث: لوحة التحكم والطلب السريع
 # ==========================================
 with tab3:
     st.markdown("### 📋 نموذج إتمام الشراء السريع المباشر")
@@ -255,13 +273,11 @@ with tab3:
     col_mango, col_strawberry = st.columns(2)
     
     with col_mango:
-        # عرض الـ Checkbox مباشرة بدون حاوية الـ HTML المسببة للمربع الفاضي
         want_mango = st.checkbox("🥭 نكهة المانجو والكركمين", key="want_m")
         if st.session_state.want_m:
             st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_m")
         
     with col_strawberry:
-        # عرض الـ Checkbox مباشرة بدون حاوية الـ HTML المسببة للمربع الفاضي
         want_strawberry = st.checkbox("🍓 نكهة الفراولة والرمان", key="want_s")
         if st.session_state.want_s:
             st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_s")
@@ -271,18 +287,13 @@ with tab3:
     customer_name = st.text_input("👤 الاسم الكامل (ثلاثي):", placeholder="اكتب اسمك هنا")
     customer_phone = st.text_input("📱 رقم الهاتف للتواصل:", placeholder="010xxxxxxxx")
     customer_address = st.text_area("🏠 العنوان بالتفصيل:", placeholder="المدينة، الحي، الشارع، رقم المنزل")
-    
     order_notes = st.text_area("💬 ملاحظات إضافية:", placeholder="موعد التوصيل المناسب أو تعليمات خاصة")
     customer_rating = st.slider("⭐ قيم تجربة التسوق من 1 إلى 5 نجوم:", 1, 5, 5)
 
     product_details = ""
-    if st.session_state.want_m:
-        product_details += f"• SheroWhey مانجو وكركمين [الكمية: {st.session_state.qty_m}]\n"
-    if st.session_state.want_s:
-        product_details += f"• SheroWhey فراولة ورمان [الكمية: {st.session_state.qty_s}]\n"
-        
-    if not st.session_state.want_m and not st.session_state.want_s:
-        product_details = "• لم يتم اختيار أي نكهة بعد!\n"
+    if st.session_state.want_m: product_details += f"• SheroWhey مانجو وكركمين [الكمية: {st.session_state.qty_m}]\n"
+    if st.session_state.want_s: product_details += f"• SheroWhey فراولة ورمان [الكمية: {st.session_state.qty_s}]\n"
+    if not st.session_state.want_m and not st.session_state.want_s: product_details = "• لم يتم اختيار أي نكهة بعد!\n"
 
     msg_template = f"""🛒 *طلب جديد ومتنوع من SheroWhey* 🛒
 
@@ -305,11 +316,5 @@ with tab3:
 
     st.markdown("#### 🚀 أزرار التنفيذ السريع:")
     col1, col2 = st.columns(2)
-    
-    with col1:
-        st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
-    with col2:
-        st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
-
-    with st.expander("👀 معاينة نص الفاتورة قبل الإرسال"):
-        st.code(msg_template, language="markdown")
+    with col1: st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
+    with col2: st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
