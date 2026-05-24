@@ -5,15 +5,15 @@ import re
 from openai import OpenAI
 
 # ==========================================
-# 1. إعدادات الصفحة والـ CSS الاحترافي المستقر الشامل
+# 1. إعدادات الصفحة والـ CSS الاحترافي الشامل والمرن
 # ==========================================
 st.set_page_config(page_title="SheroWhey | ابتكار أوكتانوفا 2026", page_icon="🍦", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap');
     
-    /* ضبط أساس الصفحة والفونت الموحد بدون استخدام النجمة العشوائية */
+    /* ضبط أساس الصفحة والفونت الموحد */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         font-family: 'Cairo', sans-serif !important;
         background-color: #0d0d11 !important;
@@ -21,18 +21,20 @@ st.markdown("""
         direction: rtl !important;
     }
     
-    /* استهداف دقيق جداً للنصوص والعناوين لفرض خط Cairo والسنترة بأمان */
-    h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown, .stMarkdown p {
+    /* سنترة شاملة لجميع النصوص والفقرات */
+    h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
         color: #ffffff !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     
     .stButton button {
         font-family: 'Cairo', sans-serif !important;
     }
 
-    /* كود الصور الذكي والكامل (Fit Width) يتجاوب مع الفون والكمبيوتر أوتوماتيك */
+    /* إجبار الصور على الفرد الكامل وملاءمة عرض الشاشة (Fit Width) */
     [data-testid="stImage"] {
         display: flex !important;
         justify-content: center !important;
@@ -50,9 +52,10 @@ st.markdown("""
         border-radius: 12px;
     }
 
-    /* تنسيق التبويبات العلوية (Tabs) */
+    /* 🛠️ تعديل مكان ونزول التبويبات العلوية (Tabs) لأسفل قليلاً وتأمين مظهرها */
     div[data-testid="stTabs"] {
         width: 100% !important;
+        margin-top: 30px !important; /* دفع التبويبات لأسفل لإعطاء مساحة مريحة */
     }
     div[data-testid="stTabs"] button {
         font-family: 'Cairo', sans-serif !important;
@@ -71,35 +74,34 @@ st.markdown("""
         border-bottom: 3px solid #f39c12 !important;
     }
     
-    /* صناديق ومربعات التأصيل العلمي المتراصة العريضة */
-    .science-box {
-        background: linear-gradient(145deg, #14141c, #1a1a26) !important;
-        border: 1px solid #222232 !important;
-        border-radius: 20px !important;
-        padding: 25px !important;
-        margin-top: 15px !important;
-        margin-bottom: 20px !important;
+    /* صناديق المعلومات المتراصة */
+    .info-card, .science-box {
+        background: linear-gradient(145deg, #14141c, #1a1a26);
+        border: 1px solid #222232;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         width: 100% !important;
-        max-width: 950px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
         text-align: center !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
     }
     
     .sub-heading {
         font-family: 'Cairo', sans-serif !important;
-        color: #f39c12 !important;
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        display: block !important;
-        margin-bottom: 15px !important;
-        border-bottom: 1px solid #222232 !important;
-        padding-bottom: 10px !important;
+        color: #f39c12;
+        font-size: 22px;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #222232;
+        padding-bottom: 10px;
         text-align: center !important;
     }
 
-    /* كروت محادثة البوت */
+    /* تنسيق كروت محادثة البوت المعدلة */
     div[data-testid="stChatMessage"] {
         direction: rtl !important;
         text-align: right !important;
@@ -115,9 +117,9 @@ st.markdown("""
 
     .badge-bar { margin: 20px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
     .custom-badge { background: #1e1e2a; padding: 6px 16px; border-radius: 50px; font-size: 13px; border: 1px solid #f39c12; color: #f39c12; }
-    .block-container { padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 92% !important; }
+    .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem !important; max-width: 92% !important; }
     
-    /* سنترة الجداول التغذوية الرسمية */
+    /* سنترة الجداول التغذوية */
     .stTable table {
         background-color: #14141c !important;
         border-radius: 12px !important;
@@ -204,7 +206,7 @@ with tab1:
 
     # الـ Carousel التفاعلي المتناسق
     slides = [
-        {"title": "🎯 رؤيتنا وهدفنا الأساسي", "desc": "تتويج البحث العلمي بتطوير منتجات غذائية 'وظيفية' لا تكتفي بتقديم المذاق الرائع، بل تدعم الصحة العامة وتعزز المناعة، لسد الفجوة بين المثلجات التقليدية والمتطلجات الصحية العصرية للمستهلك الواعي."},
+        {"title": "🎯 رؤيتنا وهدفنا الأساسي", "desc": "تتويج البحث العلمي بتطوير منتجات غذائية 'وظيفية' لا تكتفي بتقديم المذاق الرائع، بل تدعم الصحة العامة وتعزز المناعة، لسد الفجوة بين المثلجات التقليدية والمتطلبات الصحية العصرية للمستهلك الواعي."},
         {"title": "📈 ثقة المستهلك والأمان الحيوي", "desc": "أثبتت الدراسات الميدانية للفريق أن 96% من المستهلكين رحبوا تماماً بفكرة استخدام الشرش في المنتج بمجرد معرفة فوائده البيئية والصحية، مع التزامنا بأعلى معايير الجودة الحسية والأمان."},
         {"title": "📜 المواصفات القياسية المصرية", "desc": "المنتج مصنع ومطور علمياً داخل معامل القسم ومطابق تماماً للمواصفات القياسية المصرية رقم 1185 لسنة 2005 الجزء الأول الخاص بالمثلجات اللبنية وشربت الآيس كريم."}
     ]
@@ -232,12 +234,12 @@ with tab1:
     
     st.markdown("<h2 style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
     
-    # عبوة المانجو المفرودة النظيفة تماماً من المربعات
+    # عبوة المانجو
     st.markdown("<div class='science-box'>", unsafe_allow_html=True)
     st.markdown("""
-        <h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
+        <h3 style='color:#f39c12; margin-top:0;'>育 شربت المانجو الطبيعي المدعم بالكركمين</h3>
         <p style='font-size:15px; color:#ccc; line-height:1.6;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
-        <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
+        <p style='font-size:13px; color:#e74c3c;'>?? تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
     """, unsafe_allow_html=True)
     
     try:
@@ -283,11 +285,11 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: التأصيل العلمي والاستدامة (Full Width وبدون مشاكل)
+# التبويب الثاني: التأصيل العلمي والاستدامة
 # ==========================================
 with tab2:
     st.write("")
-    st.markdown("<h2 style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية للمشروع</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='centered-title' style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية للمشروع</h2>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class='science-box'>
@@ -342,7 +344,7 @@ with tab2:
     """, unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي (نظيف وآمن ومحاذى بالكامل)
+# 🛠️ التبويب الثالث: الشات الذكي مع اللوجو الشخصي للمشروع بدلاً من الرموز المكسورة
 # ==========================================
 with tab3:
     st.markdown("### 💬 SheroBot - مستشارك الذكي")
@@ -356,13 +358,28 @@ with tab3:
 
     st.write("")
     
+    # 🛠️ عرض تاريخ المحادثة واستبدال الأيقونات البرمجية المكسورة بملف اللوجو الحقيقي للمنتج
     for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]): 
-            st.markdown(message["text"])
+        # إذا كانت الرسالة من البوت أو المستخدم، بنبعت ملف اللوجو المحلي لو متوفر ليعطي مظهر Branded فخم
+        avatar_source = "logo.jpg" if message["role"] == "assistant" else "logo.jpg"
+        
+        try:
+            with st.chat_message(message["role"], avatar=avatar_source): 
+                st.markdown(message["text"])
+        except Exception:
+            # Fallback في حالة عدم رفع ملف لوجو بعد، يشتغل ميري بدون أي طلاسم
+            with st.chat_message(message["role"]): 
+                st.markdown(message["text"])
 
     if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا..."):
-        with st.chat_message("user"): 
-            st.markdown(prompt)
+        # عرض رسالة المستخدم باللوجو
+        try:
+            with st.chat_message("user", avatar="logo.png"): 
+                st.markdown(prompt)
+        except Exception:
+            with st.chat_message("user"): 
+                st.markdown(prompt)
+                
         st.session_state.chat_history.append({"role": "user", "text": prompt})
         
         raw_text = ""
@@ -396,8 +413,12 @@ with tab3:
                 if s_qty > 0: st.session_state.want_s = True; st.session_state.qty_s = s_qty
                 st.toast("🛒 تم تحديث سلة المشتريات تلقائياً!")
 
-            with st.chat_message("assistant"): 
-                st.markdown(clean_display_text)
+            try:
+                with st.chat_message("assistant", avatar="logo.png"): 
+                    st.markdown(clean_display_text)
+            except Exception:
+                with st.chat_message("assistant"): 
+                    st.markdown(clean_display_text)
             st.rerun()
 
 # ==========================================
