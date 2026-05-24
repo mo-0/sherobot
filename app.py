@@ -242,6 +242,9 @@ with tab2:
 # ==========================================
 # التبويب الثالث: لوحة التحكم والطلب السريع (إصلاح مشكلة الـ UI اللحظي)
 # ==========================================
+# ==========================================
+# التبويب الثالث: لوحة التحكم والطلب السريع (نسخة نظيفة بدون مربعات فاضية)
+# ==========================================
 with tab3:
     st.markdown("### 📋 نموذج إتمام الشراء السريع المباشر")
     st.write("البيانات في الأسفل تتحدث تلقائياً إذا طلبت من البوت أو من التبويب الأول:")
@@ -252,19 +255,16 @@ with tab3:
     col_mango, col_strawberry = st.columns(2)
     
     with col_mango:
-        st.markdown("<div style='background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333333;'>", unsafe_allow_html=True)
-        # الربط باستخدام الـ Key المباشر عشان الـ Streamlit يستجيب فوراً للتغيير الجاي من الشات
+        # عرض الـ Checkbox مباشرة بدون حاوية الـ HTML المسببة للمربع الفاضي
         want_mango = st.checkbox("🥭 نكهة المانجو والكركمين", key="want_m")
         if st.session_state.want_m:
             st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_m")
-        st.markdown("</div>", unsafe_allow_html=True)
         
     with col_strawberry:
-        st.markdown("<div style='background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333333;'>", unsafe_allow_html=True)
+        # عرض الـ Checkbox مباشرة بدون حاوية الـ HTML المسببة للمربع الفاضي
         want_strawberry = st.checkbox("🍓 نكهة الفراولة والرمان", key="want_s")
         if st.session_state.want_s:
             st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_s")
-        st.markdown("</div>", unsafe_allow_html=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
     
