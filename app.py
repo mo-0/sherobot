@@ -187,42 +187,45 @@ with tab1:
     st.markdown("<br><br><div style='text-align: center; color: #888888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px;'>© octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: البوت المطور والآمن تماماً ضد الانقطاع
+# التبويب الثاني: البوت المطور والآمن تماماً (إصلاح الـ AttributeError)
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
     
+    # تهيئة لستة الشات العادية في الـ Session State لو مش موجودة
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
     if st.button("🔄 محادثة جديدة / New Chat", key="reset_chat_btn"):
-        st.session_state.chat = model_gemini.start_chat(history=[])
+        st.session_state.chat_history = []
         st.rerun()
 
-    if "chat" not in st.session_state:
-        st.session_state.chat = model_gemini.start_chat(history=[])
-
-    for message in st.session_state.chat.history:
-        role = "assistant" if message.role == "model" else "user"
-        clean_text = re.sub(r'\[SET_ORDER:.*?\]', '', message.parts[0].text)
-        with st.chat_message(role):
-            st.markdown(clean_text)
+    # عرض تاريخ الشات القديم النظيف من الأكواد المخفية
+    for message in st.session_state.chat_history:
+        with st.chat_message(message["role"]):
+            st.markdown(message["text"])
 
     if prompt := st.chat_input("اكتب استفسارك أو طلبك هنا..."):
         with st.chat_message("user"):
             st.markdown(prompt)
         
+        # حفظ رسالة المستخدم في التاريخ فوراً
+        st.session_state.chat_history.append({"role": "user", "text": prompt})
+        
         raw_text = ""
         
         # ─── 1. محاولة استدعاء جـيـمـنـاي (الأساسي) ───
         try:
-            response = model_gemini.generate_content(prompt) # تعديل الاستدعاء لضمان الأمان في الـ Fallback
+            response = model_gemini.generate_content(prompt)
             raw_text = response.text
             
-        # ─── 2. في حالة حدوث أي مشكلة، الانتقال الفوري لـ مـيـتـا لاما (النشط حالياً لايف) ───
+        # ─── 2. في حالة حدوث أي مشكلة، الانتقال الفوري لـ مـيـتـا لاما لايف ───
         except Exception as e:
             if client_meta is not None:
-                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي (Meta Llama)...")
+                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي...")
                 try:
                     meta_response = client_meta.chat.completions.create(
-                        model="llama-3.3-70b-versatile", # تم تعديل الاسم لـ النسخة النشطة المتاحة في حسابك
+                        model="llama-3.3-70b-versatile",
                         messages=[
                             {"role": "system", "content": customer_service_persona},
                             {"role": "user", "content": prompt}
@@ -230,16 +233,19 @@ with tab2:
                     )
                     raw_text = meta_response.choices[0].message.content
                 except Exception as meta_err:
-                    raw_text = f"⚠️ عذراً، ضغط السيرفرات عالي حالياً. لكن تقدر تطلب وتتصفح النكهات من التبويب الثالث مباشرة وسنتواصل معك!"
+                    raw_text = "⚠️ عذراً، ضغط السيرفرات عالي حالياً. لكن تقدر تطلب وتتصفح النكهات من التبويب الثالث مباشرة وسنتواصل معك!"
             else:
                 raw_text = "⚠️ السيرفر الأساسي غير متاح حالياً، فضلاً استخدم نموذج الطلب السريع في التبويب الثالث لإتمام طلبك مباشرة!"
 
         # ─── 3. عرض الرد وتحديث البيانات والـ History ───
         if raw_text:
-            # تحديث الـ History يدوياً لضمان عدم حدوث Loop في الكاش
-            st.session_state.chat.history.append(genai.types.Content(role="user", parts=[genai.types.Part.from_text(prompt)]))
-            st.session_state.chat.history.append(genai.types.Content(role="model", parts=[genai.types.Part.from_text(raw_text)]))
+            # تنظيف النص النهائي من التاجز المخفية قبل عرضه للعميل
+            final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
+            
+            # حفظ رد البوت في لستة التاريخ العادية (مستحيل تضرب أيرور)
+            st.session_state.chat_history.append({"role": "assistant", "text": final_display_text})
 
+            # استخراج نية الطلب لتحديث العربة أوتوماتيكياً
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
@@ -252,12 +258,10 @@ with tab2:
                     st.session_state.qty_s = s_qty
                 st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً!")
 
-            final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             with st.chat_message("assistant"):
                 st.markdown(final_display_text)
             
             st.rerun()
-
 # ==========================================
 # التبويب الثالث: لوحة التحكم والطلب السريع
 # ==========================================
