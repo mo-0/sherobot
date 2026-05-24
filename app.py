@@ -5,15 +5,15 @@ import re
 from openai import OpenAI
 
 # ==========================================
-# 1. إعدادات الصفحة والـ CSS الاحترافي الشامل والمرن
+# 1. إعدادات الصفحة والـ CSS الاحترافي المستقر الشامل
 # ==========================================
 st.set_page_config(page_title="SheroWhey | ابتكار أوكتانوفا 2026", page_icon="🍦", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
     
-    /* ضبط أساس الصفحة والفونت الموحد */
+    /* ضبط أساس الصفحة والفونت الموحد الشامل */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         font-family: 'Cairo', sans-serif !important;
         background-color: #0d0d11 !important;
@@ -21,20 +21,19 @@ st.markdown("""
         direction: rtl !important;
     }
     
-    /* سنترة شاملة لجميع النصوص والفقرات */
-    h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p {
+    /* 🛠️ الحل الجذري: إجبار خط Cairo والسنترة على جميع المستويات والمكونات الداخلية */
+    h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p, .stMarkdown div, .stMarkdown span {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
         color: #ffffff !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
     }
     
-    .stButton button {
+    /* فرض خط Cairo على مكونات الأزرار بشكل مباشر */
+    .stButton button, [data-testid="baseButton-secondary"] {
         font-family: 'Cairo', sans-serif !important;
     }
 
-    /* إجبار الصور على الفرد الكامل وملاءمة عرض الشاشة (Fit Width) */
+    /* كود الصور الذكي والكامل (Fit Width) يتجاوب مع الفون والكمبيوتر أوتوماتيك */
     [data-testid="stImage"] {
         display: flex !important;
         justify-content: center !important;
@@ -52,10 +51,10 @@ st.markdown("""
         border-radius: 12px;
     }
 
-    /* 🛠️ تعديل مكان ونزول التبويبات العلوية (Tabs) لأسفل قليلاً وتأمين مظهرها */
+    /* تنسيق التبويبات العلوية (Tabs) ودفعها لأسفل قليلاً لراحة العين */
     div[data-testid="stTabs"] {
         width: 100% !important;
-        margin-top: 30px !important; /* دفع التبويبات لأسفل لإعطاء مساحة مريحة */
+        margin-top: 30px !important;
     }
     div[data-testid="stTabs"] button {
         font-family: 'Cairo', sans-serif !important;
@@ -74,34 +73,41 @@ st.markdown("""
         border-bottom: 3px solid #f39c12 !important;
     }
     
-    /* صناديق المعلومات المتراصة */
-    .info-card, .science-box {
-        background: linear-gradient(145deg, #14141c, #1a1a26);
-        border: 1px solid #222232;
-        border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    /* صناديق ومربعات التأصيل العلمي المتراصة العريضة مع تأمين الفونت الداخلي */
+    .science-box {
+        background: linear-gradient(145deg, #14141c, #1a1a26) !important;
+        border: 1px solid #222232 !important;
+        border-radius: 20px !important;
+        padding: 25px !important;
+        margin-top: 15px !important;
+        margin-bottom: 20px !important;
         width: 100% !important;
-        max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 950px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    }
+    
+    /* إجبار أي نص داخل الـ science-box على إتباع الـ Cairo والسنترة */
+    .science-box * {
+        font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
     }
     
     .sub-heading {
         font-family: 'Cairo', sans-serif !important;
-        color: #f39c12;
-        font-size: 22px;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #222232;
-        padding-bottom: 10px;
+        color: #f39c12 !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        display: block !important;
+        margin-bottom: 15px !important;
+        border-bottom: 1px solid #222232 !important;
+        padding-bottom: 10px !important;
         text-align: center !important;
     }
 
-    /* تنسيق كروت محادثة البوت المعدلة */
+    /* كروت محادثة البوت */
     div[data-testid="stChatMessage"] {
         direction: rtl !important;
         text-align: right !important;
@@ -111,7 +117,7 @@ st.markdown("""
         padding: 15px;
         margin-bottom: 10px;
     }
-    div[data-testid="stChatMessage"] p {
+    div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] div {
         text-align: right !important;
     }
 
@@ -119,7 +125,7 @@ st.markdown("""
     .custom-badge { background: #1e1e2a; padding: 6px 16px; border-radius: 50px; font-size: 13px; border: 1px solid #f39c12; color: #f39c12; }
     .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem !important; max-width: 92% !important; }
     
-    /* سنترة الجداول التغذوية */
+    /* سنترة وجدولة البيانات التغذوية الرسمية */
     .stTable table {
         background-color: #14141c !important;
         border-radius: 12px !important;
@@ -136,7 +142,7 @@ st.markdown("""
         font-weight: 700 !important;
         text-align: center !important;
     }
-    .stTable td {
+    .stTable td, .stTable td span {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
     }
@@ -171,7 +177,7 @@ client_meta = None
 if "GROQ_API_KEY" in st.secrets:
     client_meta = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=st.secrets["GROQ_API_KEY"])
 
-# 3. الأبواب الأربعة للواجهة
+# 3. الأبواب الأربعة للواجهة بأسماء جديدة وعصرية ونزول مريح للأسفل
 tab1, tab2, tab3, tab4 = st.tabs([
     "✨ تجربة SheroWhey", 
     "🔬 التأصيل العلمي والاستدامة",
@@ -237,9 +243,9 @@ with tab1:
     # عبوة المانجو
     st.markdown("<div class='science-box'>", unsafe_allow_html=True)
     st.markdown("""
-        <h3 style='color:#f39c12; margin-top:0;'>育 شربت المانجو الطبيعي المدعم بالكركمين</h3>
+        <h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
         <p style='font-size:15px; color:#ccc; line-height:1.6;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
-        <p style='font-size:13px; color:#e74c3c;'>?? تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
+        <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
     """, unsafe_allow_html=True)
     
     try:
@@ -285,7 +291,7 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: التأصيل العلمي والاستدامة
+# التبويب الثاني: التأصيل العلمي والاستدامة (Full Width - Cairo Fixed)
 # ==========================================
 with tab2:
     st.write("")
@@ -344,7 +350,7 @@ with tab2:
     """, unsafe_allow_html=True)
 
 # ==========================================
-# 🛠️ التبويب الثالث: الشات الذكي مع اللوجو الشخصي للمشروع بدلاً من الرموز المكسورة
+# التبويب الثالث: الشات الذكي مع الاستدعاء المحايد للأيقونات واللوجو
 # ==========================================
 with tab3:
     st.markdown("### 💬 SheroBot - مستشارك الذكي")
@@ -358,21 +364,17 @@ with tab3:
 
     st.write("")
     
-    # 🛠️ عرض تاريخ المحادثة واستبدال الأيقونات البرمجية المكسورة بملف اللوجو الحقيقي للمنتج
+    # استخدام استدعاء داخلي نظيف للأفاتار يمنع الرموز المكسورة
     for message in st.session_state.chat_history:
-        # إذا كانت الرسالة من البوت أو المستخدم، بنبعت ملف اللوجو المحلي لو متوفر ليعطي مظهر Branded فخم
-        avatar_source = "logo.jpg" if message["role"] == "assistant" else "logo.jpg"
-        
+        avatar_source = "logo.png"
         try:
             with st.chat_message(message["role"], avatar=avatar_source): 
                 st.markdown(message["text"])
         except Exception:
-            # Fallback في حالة عدم رفع ملف لوجو بعد، يشتغل ميري بدون أي طلاسم
             with st.chat_message(message["role"]): 
                 st.markdown(message["text"])
 
     if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا..."):
-        # عرض رسالة المستخدم باللوجو
         try:
             with st.chat_message("user", avatar="logo.png"): 
                 st.markdown(prompt)
