@@ -68,29 +68,31 @@ if "qty_s" not in st.session_state:
 # ==========================================
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
+# صياغة الـ Persona باللغة العربية بالكامل وبقواعد صارمة لمنع الهلوسة اللغوية
 customer_service_persona = """
-أنت مساعد خدمة عملاء ذكي واحترافي لمنتج "SheroWhey" (آيس كريم شربت صحي).
-المنتج مصنوع من شرش اللبن الطبيعي السائل كبديل للمواد الصلبة اللادهنية (SNF) طبقاً للمواصفات القياسية المصرية 1185/2005.
+أنت مساعد خدمة عملاء ذكي، ودود، واحترافي لمنتج "SheroWhey" (آيس كريم شربت وظيفي وصحي).
+المنتج مصنع علمياً بقاعدة من شرش اللبن الطبيعي السائل كبديل للمواد الصلبة اللادهنية (SNF) من اللبن الفرز، وهو مطابق للمواصفات القياسية المصرية 1185/2005 جـ1.
 
-الأنواع المتاحة:
-1. مانجو وكركمين.
-2. فراولة ورمان.
+الأنواع المتاحة فقط:
+1. SheroWhey مانجو وكركمين
+2. SheroWhey فراولة ورمان
 
-فوائد المنتج: غني بالكالسيوم والبوتاسيوم وفيتامين سي، ومضاد للأكسدة، وصديق للبيئة (Zero Waste).
+الفوائد العلمية: غني بالكالسيوم، البوتاسيوم، مضادات الأكسدة، وفيتامين سي، وقائم على فكرة تقليل الهدر البيئي (Zero Waste).
 
-قواعد الرد الصارمة:
-- إذا كلمك العميل بالعربي، رد عليه بلهجة مصرية ودودة، واضحة، وسليمة تماماً بدون لغبطة حروف.
-- إذا كلمك العميل بالإنجليزي، رد عليه بلغة إنجليزية احترافية (English).
-- ردودك تكون قصيرة ومقنعة وتجيب على السؤال بدقة علمية وتوجّه العميل للتبويب الثالث لإتمام الطلب.
+قواعد الصياغة الصارمة:
+1. يجب أن تتحدث وتكتب باللغة العربية فقط (اللهجة المصرية الودودة والواضحة)، ويُمنع تماماً استخدام أي حروف أو كلمات من لغات أخرى (مثل الروسية أو غيرها).
+2. إذا سألك المستخدم باللغة الإنجليزية، حينها فقط يمكنك الرد بلغة إنجليزية سليمة واحترافية.
+3. ردودك تكون ملخصة، مباشرة، وتجيب على الاستفسار العلمي أو التجاري بدقة، مع توجيه المستخدم دائماً للتبويب الثالث لإتمام الشراء.
 
-قاعدة الأتمتة المخفية (إجبارية):
-إذا طلب العميل نكهة وكمية محددة، أضف هذا الكود بالملي في نهاية ردك:
+قاعدة الأتمتة الإلزامية:
+إذا طلب العميل كمية محددة ونوع (مثال: عايز 3 مانجو)، ضع هذا الكود بالملي في نهاية ردك:
 [SET_ORDER: MANGO=X, STRAWBERRY=Y]
-ضع مكان X و Y الأرقام المطلوبة، وإذا لم يطلب نكهة ضع مكانها 0.
+تضع مكان X و Y الأرقام المطلوبة، والمنتج غير المطلوب تضع مكانه 0.
 """
+
 model_gemini = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
 
-# إعداد السيرفر الاحتياطي (ميتا لاما عبر منصة Groq) بالموديل المتاح حالياً
+# إعداد السيرفر الاحتياطي (ميتا لاما عبر Groq)
 client_meta = None
 if "GROQ_API_KEY" in st.secrets:
     client_meta = OpenAI(
@@ -106,7 +108,7 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: الويب سايت التفاعلي (تم تحديث use_container_width)
+# التبويب الأول: الويب سايت التفاعلي (Native Streamlit Elements)
 # ==========================================
 with tab1:
     col_brand, col_logo = st.columns([4, 1])
@@ -192,12 +194,11 @@ with tab1:
     st.markdown("<br><br><div style='text-align: center; color: #888888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px;'>© octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: البوت المطور والآمن تماماً (إصلاح الـ AttributeError)
+# التبويب الثاني: البوت المطور والمنقح لغوياً
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
     
-    # تهيئة لستة الشات العادية في الـ Session State لو مش موجودة
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
@@ -205,7 +206,6 @@ with tab2:
         st.session_state.chat_history = []
         st.rerun()
 
-    # عرض تاريخ الشات القديم النظيف من الأكواد المخفية
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
             st.markdown(message["text"])
@@ -214,20 +214,18 @@ with tab2:
         with st.chat_message("user"):
             st.markdown(prompt)
         
-        # حفظ رسالة المستخدم في التاريخ فوراً
         st.session_state.chat_history.append({"role": "user", "text": prompt})
-        
         raw_text = ""
         
-        # ─── 1. محاولة استدعاء جـيـمـنـاي (الأساسي) ───
+        # محاولة استدعاء جـيـمـنـاي
         try:
             response = model_gemini.generate_content(prompt)
             raw_text = response.text
             
-        # ─── 2. في حالة حدوث أي مشكلة، الانتقال الفوري لـ مـيـتـا لاما لايف ───
+        # التحويل التلقائي لـ مـيـتـا لاما في حالة انشغال جوجل
         except Exception as e:
             if client_meta is not None:
-                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي...")
+                st.toast("⚠️ جاري المزامنة عبر السيرفر الاحتياطي لضمان السرعة...")
                 try:
                     meta_response = client_meta.chat.completions.create(
                         model="llama-3.3-70b-versatile",
@@ -238,19 +236,16 @@ with tab2:
                     )
                     raw_text = meta_response.choices[0].message.content
                 except Exception as meta_err:
-                    raw_text = "⚠️ عذراً، ضغط السيرفرات عالي حالياً. لكن تقدر تطلب وتتصفح النكهات من التبويب الثالث مباشرة وسنتواصل معك!"
+                    raw_text = "⚠️ عذراً يا فندم، الضغط عالي حالياً. تقدر تسجل طلبك مباشرة في التبويب الثالث وسنتواصل معك فوراً!"
             else:
-                raw_text = "⚠️ السيرفر الأساسي غير متاح حالياً، فضلاً استخدم نموذج الطلب السريع في التبويب الثالث لإتمام طلبك مباشرة!"
+                raw_text = "⚠️ خط الاتصال مشغول حالياً، يرجى ملء استمارة التبويب الثالث لإتمام طلبك مباشرة."
 
-        # ─── 3. عرض الرد وتحديث البيانات والـ History ───
         if raw_text:
-            # تنظيف النص النهائي من التاجز المخفية قبل عرضه للعميل
+            # تنظيف التاجز وعرض النص النهائي
             final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
-            
-            # حفظ رد البوت في لستة التاريخ العادية (مستحيل تضرب أيرور)
             st.session_state.chat_history.append({"role": "assistant", "text": final_display_text})
 
-            # استخراج نية الطلب لتحديث العربة أوتوماتيكياً
+            # استخراج نية الشراء والكميات للمزامنة
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
@@ -267,6 +262,7 @@ with tab2:
                 st.markdown(final_display_text)
             
             st.rerun()
+
 # ==========================================
 # التبويب الثالث: لوحة التحكم والطلب السريع
 # ==========================================
@@ -325,3 +321,6 @@ with tab3:
     col1, col2 = st.columns(2)
     with col1: st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
     with col2: st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
+
+    with st.expander("👀 معاينة نص الفاتورة قبل الإرسال"):
+        st.code(msg_template, language="markdown")
