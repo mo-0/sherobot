@@ -111,34 +111,75 @@ with hero_col2:
     dots = "".join(["● " if i == st.session_state.current_slide else "○ " for i in range(len(slides))])
     st.markdown(f"<div class='indicator-dots'>{dots}</div>", unsafe_allow_html=True)
 
-    # --- القسم السفلي: كروت المنتجات (The Grid) ---
-    st.markdown("<h3 style='text-align: center; color: #2c3e50; margin-bottom:25px;'>🍨 منتجاتنا المتوفرة</h3>", unsafe_allow_html=True)
+   # --- القسم السفلي الجديد: كروت المنتجات الشاملة للبيانات والأزرار ---
+    st.markdown("<h3 style='text-align: center; color: #2c3e50; margin-bottom:25px;'>🍨 منتجاتنا المتوفرة والحقائق الغذائية</h3>", unsafe_allow_html=True)
     
+    # تقسيم الصفحة لعمودين تماماً مثل الإسكتش الجديد
     prod_col1, prod_col2 = st.columns(2)
     
+    # --- العمود الأول: المانجو والكركومين ---
     with prod_col1:
         st.markdown("""
         <div class="product-card">
             <span style="background:#e67e22; padding:4px 15px; border-radius:40px; color:white; font-size: 0.9rem;">⭐ الأكثر طلباً</span>
-            <h3 style="color:#bf5b1c; margin-top:15px;">Shero Whey مانجو والكركومين</h3>
-            <p style="color: #555; margin: 15px 0;">مزيج فريد من شرش اللبن الطبيعي مع نكهة المانجو ومستخلص الكركومين النشط.</p>
+            <h3 style="color:#bf5b1c; margin-top:15px; margin-bottom:15px;">Shero Whey مانجو والكركومين</h3>
+            
+            <img src="https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&auto=format&fit=crop&q=80" style="width:100%; border-radius:15px; margin-bottom:15px;" />
+            
+            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825;">
+                <p><b>📋 المكونات:</b> شرش سائل، بيوريه مانجو طبيعي، سكر، مستخلص كركومين نشط، مثبتات قوام طبيعية.</p>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+                <p style="font-weight: bold; color: #bf5b1c; margin-bottom: 5px;">📊 الحقائق الغذائية (لكل حصة):</p>
+                <ul style="margin-right: 20px; font-size: 0.95rem;">
+                    <li>السعرات الحرارية: 112 kcal</li>
+                    <li>إجمالي الدهون: 0.95 g</li>
+                    <li>البروتين: 0.12 g</li>
+                    <li>الكربوهيدرات: 25.10 g</li>
+                </ul>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        # زر تفاعلي ينقله للـ Tab الثالثة للطلب السريع
-        if st.button("طلب نكهة المانجو الآن 🥭", key="order_m", use_container_width=True):
-            st.info("تم تفعيل الاختيار! فضلاً اذهب لتبويب 'إدارة وتنفيذ الطلبات السريعة' بالأسفل لإتمام بياناتك.")
+        
+        # زرار "أطلب" المنفصل أسفل كارت المانجو
+        st.write("")
+        if st.button("🛍️ أطلب نكهة المانجو", key="btn_order_mango", use_container_width=True):
+            st.success("🎯 تم تحديد المانجو! تقدر دلوقتي تنقل لتبويب 'إدارة وتنفيذ الطلبات السريعة' لتأكيد بياناتك.")
 
+    # --- العمود الثاني: الفراولة والرمان ---
     with prod_col2:
         st.markdown("""
         <div class="product-card">
             <span style="background:#e67e22; padding:4px 15px; border-radius:40px; color:white; font-size: 0.9rem;">🌟 جديد</span>
-            <h3 style="color:#bf5b1c; margin-top:15px;">Shero Whey فراولة ورمان</h3>
-            <p style="color: #555; margin: 15px 0;">تركيبة غنية وفاخرة ممزوجة بالفراولة والرمان الغنيين بمضادات الأكسدة الطبيعية.</p>
+            <h3 style="color:#bf5b1c; margin-top:15px; margin-bottom:15px;">Shero Whey فراولة ورمان</h3>
+            
+            <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=400&auto=format&fit=crop&q=80" style="width:100%; border-radius:15px; margin-bottom:15px;" />
+            
+            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825;">
+                <p><b>📋 المكونات:</b> شرش سائل، سكر، بيوريه فراولة، عصير رمان طبيعي، كريمة خفق، صمغ السليلوز E466.</p>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+                <p style="font-weight: bold; color: #bf5b1c; margin-bottom: 5px;">📊 الحقائق الغذائية (الحصة 92.6 جرام):</p>
+                <ul style="margin-right: 20px; font-size: 0.95rem;">
+                    <li>السعرات الحرارية: 116.42 kcal</li>
+                    <li>إجمالي الدهون: 1.02 g</li>
+                    <li>البروتين: 0.10 g</li>
+                    <li>الكربوهيدرات: 26.71 g</li>
+                </ul>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("طلب نكهة الفراولة الآن 🍓", key="order_s", use_container_width=True):
-            st.info("تم تفعيل الاختيار! فضلاً اذهب لتبويب 'إدارة وتنفيذ الطلبات السريعة' بالأسفل لإتمام بياناتك.")
+        
+        # زرار "أطلب" المنفصل أسفل كارت الفراولة
+        st.write("")
+        if st.button("🛍️ أطلب نكهة الفراولة", key="btn_order_strawberry", use_container_width=True):
+            st.success("🎯 تم تحديد الفراولة! تقدر دلوقتي تنقل لتبويب 'إدارة وتنفيذ الطلبات السريعة' لتأكيد بياناتك.")
 
+    # --- الفوتر السفلي (Footer) المكتوب في الإسكتش ---
+    st.markdown("""
+        <br><br>
+        <div style="text-align: center; color: #7f8c8d; font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 15px;">
+            © octanova 2026 | جميع الحقوق محفوظة لمشروع Shero Whey
+        </div>
+    """, unsafe_allow_html=True)
 
 # ==========================================
 # التبويب الثاني: البوت (البانل الخاص بالاستفسارات)
