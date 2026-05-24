@@ -5,7 +5,7 @@ import re
 from openai import OpenAI
 
 # ==========================================
-# 1. إعدادات الصفحة والـ CSS الاحترافي (Modern Grid Layout)
+# 1. إعدادات الصفحة والـ CSS الاحترافي الشامل والمرن
 # ==========================================
 st.set_page_config(page_title="SheroWhey | ابتكار أوكتانوفا 2026", page_icon="🍦", layout="wide")
 
@@ -21,36 +21,39 @@ st.markdown("""
         direction: rtl !important;
     }
     
-    /* إجبار خط Cairo والسنترة على جميع المكونات بدون استثناء */
+    /* الحل الجذري: إجبار خط Cairo والسنترة على جميع المكونات والنصوص */
     h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p, .stMarkdown div, .stMarkdown span {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
         color: #ffffff !important;
     }
     
-    .stButton button {
+    .stButton button, [data-testid="baseButton-secondary"] {
         font-family: 'Cairo', sans-serif !important;
     }
 
-    /* كود الصور الذكي والكامل (Fit Width) */
+    /* كود الصور الذكي والكامل (Fit Width) يتجاوب مع الفون والكمبيوتر أوتوماتيك */
     [data-testid="stImage"] {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
         width: 100% !important;
+        max-width: 100% !important;
         margin: 10px auto !important;
     }
     [data-testid="stImage"] img {
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
+        display: block !important;
+        margin: 0 auto !important;
         border-radius: 12px;
     }
 
-    /* التبويبات العلوية المريحة */
+    /* تنسيق التبويبات العلوية (Tabs) ودفعها لأسفل قليلاً لراحة العين */
     div[data-testid="stTabs"] {
         width: 100% !important;
-        margin-top: 20px !important;
+        margin-top: 30px !important;
     }
     div[data-testid="stTabs"] button {
         font-family: 'Cairo', sans-serif !important;
@@ -59,8 +62,9 @@ st.markdown("""
         color: #8c8c9a !important;
         background-color: #14141c !important;
         border: 1px solid #1f1f2e !important;
-        padding: 10px 15px !important;
+        padding: 12px 15px !important;
         flex-grow: 1 !important;
+        text-align: center !important;
     }
     div[data-testid="stTabs"] button[aria-selected="true"] {
         color: #f39c12 !important;
@@ -68,26 +72,40 @@ st.markdown("""
         border-bottom: 3px solid #f39c12 !important;
     }
     
-    /* صناديق التأصيل العلمي والمنتجات */
-    .custom-box {
+    /* صناديق ومربعات التأصيل العلمي المتراصة العريضة مع تأمين الفونت الداخلي كاملاً */
+    .science-box {
         background: linear-gradient(145deg, #14141c, #1a1a26) !important;
         border: 1px solid #222232 !important;
         border-radius: 20px !important;
         padding: 25px !important;
-        margin-bottom: 15px !important;
+        margin-top: 15px !important;
+        margin-bottom: 20px !important;
+        width: 100% !important;
+        max-width: 950px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
         text-align: center !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+        display: inline-block !important; /* يمنع ظهور الحاويات الفارغة أو تمددها العشوائي */
     }
-
-    /* إجبار الفونت داخل الصناديق */
-    .custom-box * {
+    
+    .science-box * {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
     }
-
-    .badge-bar { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-    .custom-badge { background: #1e1e2a; padding: 5px 15px; border-radius: 50px; font-size: 12px; border: 1px solid #f39c12; color: #f39c12; }
     
+    .sub-heading {
+        font-family: 'Cairo', sans-serif !important;
+        color: #f39c12 !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        display: block !important;
+        margin-bottom: 15px !important;
+        border-bottom: 1px solid #222232 !important;
+        padding-bottom: 10px !important;
+        text-align: center !important;
+    }
+
     /* كروت محادثة البوت */
     div[data-testid="stChatMessage"] {
         direction: rtl !important;
@@ -95,20 +113,37 @@ st.markdown("""
         background-color: #14141c !important;
         border-radius: 12px;
         border: 1px solid #222232;
+        padding: 15px;
+        margin-bottom: 10px;
     }
     div[data-testid="stChatMessage"] p, div[data-testid="stChatMessage"] span, div[data-testid="stChatMessage"] div {
         text-align: right !important;
     }
+
+    .badge-bar { margin: 20px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .custom-badge { background: #1e1e2a; padding: 6px 16px; border-radius: 50px; font-size: 13px; border: 1px solid #f39c12; color: #f39c12; }
+    .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem !important; max-width: 92% !important; }
     
-    /* الجداول التغذوية */
+    /* سنترة وجدولة البيانات التغذوية الرسمية كاملاً بداخل المربعات */
     .stTable table {
         background-color: #14141c !important;
         border-radius: 12px !important;
+        overflow: hidden !important;
+        border: 1px solid #222232 !important;
         width: 100% !important;
+        max-width: 100% !important;
         margin: 10px auto !important;
     }
-    .stTable th { color: #f39c12 !important; font-weight: 700 !important; text-align: center !important; }
-    .stTable td { text-align: center !important; }
+    .stTable th {
+        background-color: #1c1c28 !important;
+        color: #f39c12 !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+    }
+    .stTable td, .stTable td span {
+        font-family: 'Cairo', sans-serif !important;
+        text-align: center !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -120,20 +155,15 @@ if "qty_s" not in st.session_state: st.session_state.qty_s = 1
 if "chat_history" not in st.session_state: st.session_state.chat_history = []
 
 # ==========================================
-# 2. إعدادات الـ APIs والمزامنة المستقرة لبوت الشات
+# 2. إعدادات الـ APIs (جوجل جيمني + لاما كاحتياطي)
 # ==========================================
-# تهيئة مفتاح جوجل جيمني بشكل نظامي ومستقر لمنع أخطاء السيرفر
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 customer_service_persona = """
 أنت مساعد خدمة عملاء ومستشار علمي ذكي لمنتج "SheroWhey" (آيس كريم شربت وظيفي وصحي مبتكر من تطوير فريق أوكتانوفا بكلية الزراعة جامعة عين شمس لعام 2026).
 المنتج مصنع باستبدال الجوامد اللادهنية الفرز (SNF) بشرش اللبن السائل الطبيعي الخام ومطابق للمواصفات القياسية المصرية 1185/2005 جـ1.
 
-الأنواع المتوفرة:
-1. شربت المانجو الطبيعي المدعم بالكركمين (يحتوي على المانجيفيرين لتعزيز المناعة ومضاد للأكسدة).
-2. شربت الفراولة والرمان الطبيعي (يحتوي على الأنثوسيانين وحمض الإيلاجيك لدعم صحة القلب).
-
-قواعد الرد الإلزامية: رد بلهجة مصرية ودودة ومحاذاة سنتر، ولا تستخدم مصطلحات تسبب طلاسم لغوية. وجه العميل دائماً للتبويب الرابع لإتمام الشراء.
+قواعد الرد: رد بلهجة مصرية ودودة جداً وموزونة ومحاذاة سنتر، ولا تستخدم مصطلحات أو وسوم تسبب طلاسم لغوية. وجه العميل دائماً للتبويب الرابع لإتمام الشراء.
 """
 model_gemini = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
 
@@ -141,7 +171,7 @@ client_meta = None
 if "GROQ_API_KEY" in st.secrets:
     client_meta = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=st.secrets["GROQ_API_KEY"])
 
-# 3. بناء الواجهة
+# 3. بناء لوحة التبويبات الأربعة بنزول مريح للأسفل
 tab1, tab2, tab3, tab4 = st.tabs([
     "✨ تجربة SheroWhey", 
     "🔬 التأصيل العلمي والاستدامة",
@@ -150,16 +180,19 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: كتالوج المنتجات التفاعلي (Side-by-Side Products)
+# التبويب الأول: الكتالوج المقسم بالتساوي وبدون مربعات فارغة
 # ==========================================
 with tab1:
-    st.markdown("<h1 style='font-size: 55px; font-weight: 900; color: white;'>SheroWhey</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='color: #f39c12; font-weight: 600; margin-top: -15px;'>معنى جديد للشربت | إنتاج شربت وظيفي مبتكر</h3>", unsafe_allow_html=True)
+    st.write("")
+    st.markdown("<h1 style='font-size: 55px; font-weight: 900; color: white; margin-bottom: 0;'>SheroWhey</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #f39c12; font-weight: 600; margin-top: 0;'>معنى جديد للشربت | إنتاج شربت وظيفي مبتكر</h3>", unsafe_allow_html=True)
     
     st.markdown("""
-    <div style='max-width: 850px; font-size: 17px; color: #b3b3b3; line-height: 1.8; margin: 0 auto;'>
+    <div style='max-width: 850px; font-size: 17px; color: #b3b3b3; line-height: 1.8; margin-left: auto; margin-right: auto;'>
         🚀 <b>ابتكار علمي مستدام من فكرة وتطوير فريق أوكتانوفا 2026</b><br>
-        يقوم المشروع على فكرة هندسية متطورة عبر استبدال الجوامد اللادهنية للبن الفرز (SNF) بالكامل بشرش اللبن السائل الحلو الخام لتحقيق التوازن بين المذاق الاستوائي الفاخر والقيمة التغذوية الوظيفية العليا.
+        • يقوم المشروع على فكرة هندسية متطورة في تكنولوجيا الألبان والأغذية.<br>
+        • تم استبدال الجوامد اللادهنية للبن الفرز (SNF) بالكامل بشرش اللبن السائل الحلو الخام.<br>
+        • نهدف إلى تحقيق التوازن المثالي بين المذاق الاستوائي الفاخر والقيمة الغذائية الحيوية الفائقة للمستهلك.
     </div>
     """, unsafe_allow_html=True)
     
@@ -171,184 +204,165 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-    # المربعات الـ 3 الثابتة جنب بعض (Tiled Layout) بدل الكاروسيل
+    # المربعات الثلاثة الثابتة
     st.markdown("<br>", unsafe_allow_html=True)
     t1, t2, t3 = st.columns(3, gap="medium")
     with t1:
-        st.markdown("<div class='custom-box'><strong style='color:#f39c12;'>🎯 رؤيتنا وهدفنا الأساسي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>تطوير منتجات وظيفية تدعم الصحة العامة وتعزز المناعة، لسد الفجوة بين المثلجات التقليدية والمتطلبات الصحية للمستهلك الواعي.</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>🎯 رؤيتنا وهدفنا الأساسي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>تطوير منتجات وظيفية تدعم الصحة العامة وتعزز المناعة، لسد الفجوة بين المثلجات التقليدية والمتطلبات الصحية للمستهلك الواعي.</p></div>", unsafe_allow_html=True)
     with t2:
-        st.markdown("<div class='custom-box'><strong style='color:#f39c12;'>📈 ثقة المستهلك والأمان الحيوي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>أثبتت الدراسات الميدانية للفريق أن 96% من المستهلكين رحبوا بفكرة استخدام الشرش بمجرد معرفة فوائده البيئية والصحية.</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📈 ثقة المستهلك والأمان الحيوي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>أثبتت الدراسات الميدانية للفريق أن 96% من المستهلكين رحبوا تماماً بفكرة استخدام الشرش في المنتج بمجرد معرفة فوائده البيئية والصحية.</p></div>", unsafe_allow_html=True)
     with t3:
-        st.markdown("<div class='custom-box'><strong style='color:#f39c12;'>📜 المواصفات القياسية المصرية</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>المنتج مصنع ومطور علمياً ومطابق تماماً للمواصفات القياسية المصرية رقم 1185 لسنة 2005 جـ1 الخاصة بالمثلجات وشربت الآيس كريم.</p></div>", unsafe_allow_html=True)
+        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📜 المواصفات القياسية المصرية</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>المنتج مصنع ومطور علمياً ومطابق تماماً للمواصفات القياسية المصرية رقم 1185 لسنة 2005 الجزء الأول الخاص بالمثلجات اللبنية وشربت الآيس كريم.</p></div>", unsafe_allow_html=True)
 
     st.markdown("<br><hr style='border-color:#222232;'><br>", unsafe_allow_html=True)
     
-    # عرض المنتجين جنب بعض (Split Screen Layout) مع الحقائق الغذائية الكاملة
     st.markdown("<h2 style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
     
-    col_left, col_right = st.columns(2, gap="large")
+    # تقسيم الصفحة لنصفين متساويين للمنتجين (Split Screen) وحذف المربعات الفارغة نهائياً
+    col_right, col_left = st.columns(2, gap="large")
     
-    with col_right: # منتج المانجو على اليمين
-        st.markdown("<div class='custom-box'>", unsafe_allow_html=True)
-        st.markdown("<h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; color:#ccc; line-height:1.5;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>", unsafe_allow_html=True)
+    with col_right: # عبوة المانجو (على اليمين)
+        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
+        st.markdown("""
+            <h3 style='color:#f39c12; margin-top:0;'>育 شربت المانجو الطبيعي المدعم بالكركمين</h3>
+            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
+            <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
+        """, unsafe_allow_html=True)
         
         try:
             st.image("mango_pack.png", use_container_width=True)
-        except:
-            st.info("💡 يرجى رفع ملف العبوة باسم mango_pack.png")
+        except Exception:
+            st.info("💡 يرجى التأكد من رفع ملف باسم mango_pack.png")
         
-        st.markdown("<b style='color:#f39c12;'>📊 الحقائق الغذائية الكاملة (حصة 100 جرام | 4 أوز):</b>", unsafe_allow_html=True)
+        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية (حصة 100 جرام):</b>", unsafe_allow_html=True)
         st.table({
             "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
             "الكمية في الحصة": ["117.7 kcal", "1.1 g", "0.11 g", "26.85 g", "0.64 g", "26.8 mg", "173.9 mg", "22.1 mg"]
         })
-        if st.button("🛍️ إضافة عبوة المانجو", key="add_m_split_btn", use_container_width=True):
+        if st.button("🛍️ إضافة عبوة المانجو", key="add_m_box", use_container_width=True):
             st.session_state.want_m = True
-            st.toast("🎯 تم إضافة شربت المانجو والكركمين لعربتك!")
+            st.toast("🎯 تم إضافة شربت المانجو لعربتك بنجاح!")
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with col_left: # منتج الفراولة على الشمال
-        st.markdown("<div class='custom-box'>", unsafe_allow_html=True)
-        st.markdown("<h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; color:#ccc; line-height:1.5;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>", unsafe_allow_html=True)
+    with col_left: # عبوة الفراولة (على الشمال)
+        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
+        st.markdown("""
+            <h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>
+            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
+            <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
+        """, unsafe_allow_html=True)
         
         try:
             st.image("strawberry_pack.png", use_container_width=True)
-        except:
-            st.info("💡 يرجى رفع ملف العبوة باسم strawberry_pack.png")
+        except Exception:
+            st.info("💡 يرجى التأكد من رفع ملف باسم strawberry_pack.png")
         
-        st.markdown("<b style='color:#f39c12;'>📊 الحقائق الغذائية الكاملة (حصة 92.6 جرام | 4 أوز):</b>", unsafe_allow_html=True)
+        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية (حصة 92.6 جرام):</b>", unsafe_allow_html=True)
         st.table({
             "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
             "الكمية في الحصة": ["116.42 kcal", "1.02 g", "0.10 g", "26.71 g", "0.87 g", "19.45 mg", "165.01 mg", "20.46 mg"]
         })
-        if st.button("🛍️ إضافة عبوة الفراولة", key="add_s_split_btn", use_container_width=True):
+        if st.button("🛍️ إضافة عبوة الفراولة", key="add_s_box", use_container_width=True):
             st.session_state.want_s = True
-            st.toast("🎯 تم إضافة شربت الفراولة والرمان لعربتك!")
+            st.toast("🎯 تم إضافة شربت الفراولة والرمان لعربتك بنجاح!")
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: التأصيل العلمي والاستدامة (إرجاع كافة التفاصيل الدقيقة)
+# التبويب الثاني: التأصيل العلمي والاستدامة
 # ==========================================
 with tab2:
-    st.markdown("<h2 style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية الكاملة للمشروع</h2>", unsafe_allow_html=True)
+    st.write("")
+    st.markdown("<h2 class='centered-title' style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية للمشروع</h2>", unsafe_allow_html=True)
     
-    # عرض صورة التيم المخصصة بالمنتصف
-    st.markdown("<b style='color:#f39c12;'>📸 فريق البحث العلمي (أوكتانوفا 2026)</b>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class='science-box'>
+        <span class='sub-heading'>🏫 الجهة الأكاديمية والبحثية</span>
+        <b>الجامعة:</b> جامعة عين شمس &nbsp;|&nbsp; <b>الكلية:</b> كلية الزراعة<br>
+        <b>القسم:</b> قسم علوم الأغذية ( شعبة الألبان وشعب صناعات الأغذية )
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<b style='color:#f39c12;'>📸 فريق عمل أوكتانوفا 2026 برحاب الكلية</b>", unsafe_allow_html=True)
     try:
         st.image("team_photo.jpg", use_container_width=True)
-    except:
-        st.info("💡 يرجى رفع صورة التيم باسم team_photo.jpg لتظهر هنا في السنتر")
-
-    # 1. صندوق الجهة الأكاديمية
+    except Exception:
+        st.info("💡 يرجى رفع ملف باسم team_photo.jpg لتظهر الصورة بالمنتصف")
+        
     st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#f39c12; margin-bottom:10px;'>🏫 الجهة الأكاديمية والبحثية</h3>
-        <p style='font-size:16px;'><b>الجهة:</b> كلية الزراعة - جامعة عين شمس | قسم علوم الأغذية (شعبة الألبان وصناعات الأغذية)</p>
-        <p style='font-size:16px;'><b>المرحلة الدراسية:</b> طلبة المستوى الرابع (فريق أوكتانوفا - 2026)</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # 2. صندوق أسماء أعضاء الفريق بالكامل
-    st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#f39c12; margin-bottom:10px;'>👥 أسماء أعضاء فريق العمل</h3>
-        <p style='font-size:16px; line-height:1.8;'>
-            <b>شعبة الألبان:</b> مصطفى صبحي | بسام عادل | رجب محمد | فؤاد سيد <br>
-            <b>شعبة صناعات الأغذية:</b> نورهان محمد | مريم طارق | شمس محمود | منة الله عوض
-        </p>
+    <div class='science-box'>
+        <span class='sub-heading'>👥 أعضاء فريق أوكتانوفا (Octanova 2026)</span>
+        <b>شعبة الألبان:</b> مصطفى صبحي | بسام عادل | رجب محمد | فؤاد سيد <br>
+        <b>شعبة صناعات الأغذية:</b> نورهان محمد | مريم طارق | شمس محمود | منة الله عوض
     </div>
     """, unsafe_allow_html=True)
 
-    # 3. صندوق اللجنة الإشرافية بالكامل
     st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#f39c12; margin-bottom:10px;'>👨‍🏫 الهيئة الإشرافية العليا</h3>
-        <p style='font-size:16px; line-height:1.7; color:#ddd;'>
-            <b>أ.د. عزة فرحات</b> (أستاذ تكنولوجيا الألبان)<br>
-            <b>د. نعمة سعيد</b> (مدرس تكنولوجيا الألبان)<br>
-            <b>م.م. حسام الرحماني</b> (مدرس مساعد تكنولوجيا الألبان)<br>
-            <b>أ. آيه أحمد إسماعيل</b> (معيدة بقسم علوم الأغذية)
-        </p>
+    <div class='science-box'>
+        <span class='sub-heading'>👨‍🏫 الهيئة الإشرافية العليا للمشروع</span>
+        <b>أ.د. عزة فرحات</b> (أستاذ تكنولوجيا الألبان) &nbsp;|&nbsp; <b>د. نعمة سعيد</b> (مدرس تكنولوجيا الألبان)<br>
+        <b>م.م. حسام الرحماني</b> (مدرس مساعد تكنولوجيا الألبان) &nbsp;|&nbsp; <b>أ. آيه أحمد إسماعيل</b> (معيدة بقسم علوم الأغذية)
     </div>
     """, unsafe_allow_html=True)
 
-    # 4. القيمة الغذائية للشرش (سطر مستقل ومميز)
     st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#2ecc71; margin-bottom:10px;'>🥛 القيمة الغذائية لشرش اللبن السائل الطبيعي</h3>
-        <p style='font-size:15px; line-height:1.7;'>
-            <b>لماذا الشرش؟</b> الشرش غني بالبرطينات عالية القيمة الحيوية (Whey Proteins)، واستخدامه بداخل صياغة الهيكل التكويني للشربت يعطي قواماً كريمياً ناعماً ومميزاً، ويعزز الامتصاص الحيوي الكامل للمواد الفعالة والنشطة مثل الكركمين في الجسم.
-        </p>
+    <div class='science-box'>
+        <span class='sub-heading'>🥛 القيمة الغذائية لشرش اللبن السائل الطبيعي</span>
+        يتميز <b>شرش اللبن السائل الحلو الطبيعي الخام</b> باحتوائه على بروتينات الشرش (Whey Proteins) عالية القيمة الحيوية مثل بيتا-لاكتوجلوبولين وألفا-لاكتالبومين. استخدامه كبديل برامجي للجوامد اللادهنية للبن الفرز (SNF) يمنح الشربت قواماً متماسكاً وناعماً، بالإضافة إلى زيادة الذوبانية والانتشار للمركبات النشطة حيوياً بداخل جسم الإنسان، مما يعزز الاستفادة الفورية من المغذيات الحيوية المضافة.
     </div>
     """, unsafe_allow_html=True)
 
-    # 5. الاستدامة والبيئة (سطر مستقل ومميز)
     st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#2ecc71; margin-bottom:10px;'>🌍 الاستدامة والبيئة (OUR SUSTAINABLE PLANET)</h3>
-        <p style='font-size:15px; line-height:1.7; text-align:justify;'>
-            يُعتبر "الشرش السائل" ناتجاً ثانوياً ضخماً متخلفاً عن صناعة الأجبان، والتخلص منه دون معالجة يمثل عبئاً بيئياً كبيراً على شبكات الصرف ومصادر المياه العذبة. قام الفريق بتحويل هذا التحدي البيئي إلى فرصة ابتكارية واعدة عبر استبدال المكون المائي الكامل والمواد الصلبة اللادهنية (SNF) للبن الفرز في الشربت بالشرش الحلو السائل الخام، لتحقيق معادلة الاستدامة وتقليل الهدر البيئي مع رفع القيمة الحيوية للمنتج الوظيفي النهائي (Zero Waste).
-        </p>
+    <div class='science-box'>
+        <span class='sub-heading'>🌍 الاستدامة والبيئة (OUR SUSTAINABLE PLANET)</span>
+        يُعد "الشرش السائل" أحد أضخم النواتج الثانوية المتخلفة عن صناعة الجبن، ويمثل التخلص منه دون معالجة عبئاً بيئياً ثقيلاً ومصدراً للتلوث العضوي العالي لشبكات الصرف ومجاري المياه (ارتفاع معامل BOD و COD). نجح الفريق في تدوير هذا التحدي عبر استبدال المكون المائي الكامل والمواد الصلبة اللادهنية (SNF) للبن الفرز في الشربت بالشرش السائل، محققاً صفر نفايات (Zero Waste) ومساهماً في صياغة اقتصاد دائري ومستدام للقطاع الغذائي.
     </div>
     """, unsafe_allow_html=True)
 
-    # 6. المركبات النشطة والفوائد الصحية بالكامل
     st.markdown("""
-    <div class='custom-box'>
-        <h3 style='color:#f39c12; margin-bottom:10px;'>🧪 المركبات النشطة حيوياً والفوائد الصحية الموثقة</h3>
-        <p style='font-size:15px; line-height:1.8; text-align:right;'>
-            <b>🥭 توليفة شربت المانجو والكركمين (التوليفة الذهبية لتعزيز المناعة):</b><br>
-            • <b>المانجيفيرين:</b> مضاد أكسدة قوي مستخلص طبيعياً من ثمار المانجو.<br>
-            • <b>الكركمينويدات:</b> المركب الفعال والنشط في الكركم بخصائصه الفريدة المضادة للأمراض.<br>
-            • <b>فيتامين C والكاروتينات:</b> لتعزيز نضارة الخلايا وحمايتها من الإجهاد التأكسدي والالتهابات، مع تكامل حيوي بين بروتينات الشرش والكركمين لزيادة معدل الامتصاص.<br><br>
-            <b>🍓 توليفة شربت الفراولة والرمان (إنتعاش وصحة القلب):</b><br>
-            • <b>الأنثوسيانين:</b> الصبغات الحمراء الطبيعية التي تحمي الأوعية الدموية وتدعم الدورة الدموية.<br>
-            • <b>حمض الإيلاجيك:</b> متوفر بكثرة في الرمان لمكافحة الشوارد الحرة والمساعدة في ضبط ضغط الدم طبيعياً.<br>
-            • <b>البولي فينولات:</b> لدعم الوظائف الحيوية ونشاط مضاد للميكروبات، وتعويض الفيتامينات والمعادن بفضل الشرش الحلو السائل.
-        </p>
+    <div class='science-box'>
+        <span class='sub-heading'>🧪 المركبات النشطة حيوياً والفوائد الصحية الموثقة</span>
+        <b>مانجو والكركمين الطبيعي (التوليفة الذهبية لتعزيز المناعة):</b> تشتمل التركيبة على مركب <b>المانجيفيرين (Mangiferin)</b> قوي الفعالية المتواجد في بيوريه المانجو، بالتكامل مع الـ<b>كركمينويدات (Curcuminoids)</b> المضافة وفيتامين C والكاروتينات. تعمل هذه التوليفة كمضاد أكسدة جبار لحماية الخلايا ومكافحة الالتهابات، ورفع كفاءة الجهاز المناعي بفضل زيادة الإتاحة الحيوية للكركمين بارتباطه ببروتينات الشرش السائل الطبيعي.<br><br>
+        <b>فراولة وعصير الرمان الطبيعي (إنتعاش وصحة القلب):</b> غنية بصبغات <b>الأنثوسيانين (Anthocyanins)</b> الفعالة في دعم وصيانة سلامة الأوعية الدموية وضبط ضغط الدم، بالإضافة إلى <b>حمض الإيلاجيك (Ellagic Acid)</b> ومجموعة الـ<b>بولي فينولات</b> المضادة للميكروبات والالتهابات، مما يمنح الجسم درعاً واقياً طبيعياً يعوض العناصر والكهرباء الحيوية المفقودة بفضل الشرش الحلو.
     </div>
     """, unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي (روابط أيقونات فلات أيكون مستقرة ومفلترة)
+# التبويب الثالث: الشات الذكي مع الأيقونات الحديثة والآمنة
 # ==========================================
 with tab3:
-    st.markdown("### 💬 SheroBot - مستشارك الذكي والأكاديمي")
+    st.markdown("### 💬 SheroBot - مستشارك الذكي")
     
-    if st.button("🗑️ مسح سجل المحادثة بالكامل", use_container_width=True, key="clear_chat_tab3"):
-        st.session_state.chat_history = []
-        st.toast("🧹 تم تصفير سجل المحادثة بنجاح!")
-        st.rerun()
+    chat_control_col1, chat_control_col2, chat_control_col3 = st.columns([1, 1.2, 1])
+    with chat_control_col2:
+        if st.button("🗑️ مسح سجل المحادثة بالكامل", use_container_width=True, key="clear_chat_button"):
+            st.session_state.chat_history = []
+            st.toast("🧹 تم تصفير المحادثة بنجاح!")
+            st.rerun()
 
     st.write("")
     
-    # استخدام روابط فلات أيكون مستقرة وعالمية تفتح على الموبايل بدون أي كود مكسور
     bot_avatar_url = "https://cdn-icons-png.flaticon.com/512/4712/4712035.png"
     user_avatar_url = "https://cdn-icons-png.flaticon.com/512/1144/1144709.png"
 
-    # عرض تاريخ الشات
     for message in st.session_state.chat_history:
         current_avatar = bot_avatar_url if message["role"] == "assistant" else user_avatar_url
         with st.chat_message(message["role"], avatar=current_avatar): 
             st.markdown(message["text"])
 
-    if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا للـ SheroBot..."):
+    if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا..."):
         with st.chat_message("user", avatar=user_avatar_url): 
             st.markdown(prompt)
         st.session_state.chat_history.append({"role": "user", "text": prompt})
         
-        # هندسة الاتصال المباشر والمستقر مع الـ API لمنع أخطاء الـ Timeout أو السيرفر مشغول
+        raw_text = ""
         try:
             response = model_gemini.generate_content(prompt)
             raw_text = response.text
         except Exception:
             if client_meta is not None:
+                st.toast("⚠️ جاري المزامنة عبر السيرفر الاحتياطي...")
                 try:
                     meta_response = client_meta.chat.completions.create(
                         model="llama-3.3-70b-versatile",
@@ -356,18 +370,16 @@ with tab3:
                     )
                     raw_text = meta_response.choices[0].message.content
                 except Exception:
-                    raw_text = "⚠️ خط الاتصال مزدحم حالياً يا فندم، تفضل بالانتقال للتبويب الأخير لإرسال طلبك فوراً!"
+                    raw_text = "⚠️ السيرفرات مشغولة حالياً، تفضل بالانتقال للتبويب الأخير لإرسال طلبك فوراً!"
             else:
-                raw_text = "⚠️ خط الاتصال مزدحم حالياً يا فندم، تفضل بالانتقال للتبويب الأخير لإرسال طلبك فوراً!"
+                raw_text = "خط الاتصال مشغول حالياً يا فندم، تفضل بالانتقال للتبويب الأخير مباشرة لإتمام طلبك."
 
         if raw_text:
-            # فلترة وتنظيف النصوص من أي رموز أو كلمات مكسورة تلقائياً
             clean_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             clean_display_text = clean_display_text.replace("smart_toy", "").replace("face", "").replace(":", "")
             
             st.session_state.chat_history.append({"role": "assistant", "text": clean_display_text})
             
-            # معالجة الأتمتة وضبط أرقام سلة المشتريات
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1)); s_qty = int(match.group(2))
@@ -397,7 +409,7 @@ with tab4:
             st.number_input("الكمية المطلوبة (كوب 120 مل):", min_value=1, max_value=100, key="qty_s")
         
     st.markdown("---")
-    st.markdown("#### 👤 بيانات الشحن والتواصل للطلب")
+    st.markdown("#### 👤 بيانات الشحن والتواصل")
     c_col1, c_col2 = st.columns(2)
     with c_col1:
         customer_name = st.text_input("الاسم الكامل للعميل:")
@@ -412,12 +424,12 @@ with tab4:
 
     msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان: {customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
     
-    st.markdown("#### 🚀 تنفيذ الطلب السريع والربط الخارجي:")
+    st.markdown("#### 🚀 تنفيذ الطلب السريع:")
     btn_col1, btn_col2 = st.columns(2)
     with btn_col1: 
         st.link_button("📱 إرسال الطلب عبر الواتساب", f"https://wa.me/201090416662?text={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
     with btn_col2: 
-        st.link_button("📧 إرسال الطلب عبر الإيميل للمعمل", f"mailto:sheroway78@gmail.com?subject=Order_SheroWhey&body={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
+        st.link_button("📧 إرسال الطلب عبر الإيميل", f"mailto:sheroway78@gmail.com?subject=Order&body={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
 
     st.markdown("""
         <br><br>
