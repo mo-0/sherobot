@@ -27,115 +27,89 @@ tab1, tab2, tab3 = st.tabs([
     "📋 إدارة وتنفيذ الطلبات السريعة"
 ])
 
-# ==========================================
-# التبويب الأول: الويب سايت التفاعلي (Carousel + Products)
-# ==========================================
-with tab1:
-    # تنسيق CSS مخصص لـ الـ Carousel والكروت السفلى لتبدو مودرن واحترافية
+# --- الهيدر العلوي والأقسام الثابتة (إضافة اللوجو الحقيقي) ---
+# قمنا بتقسيم السطر العلوي بحيث يأخذ اللوجو مساحة صغيرة على اليمين تماماً مثل الإسكتش
+col_brand, col_logo = st.columns([4, 1])
+
+with col_brand:
+    # عنوان البراند والترحيب على اليسار والمنتصف
     st.markdown("""
-        <style>
-        .hero-box {
-            background: linear-gradient(135deg, #fff8e7, #fef4e0);
-            border-radius: 25px;
-            padding: 30px;
-            border-right: 8px solid #f9a825;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .product-card {
-            background-color: white;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 1px solid #ffe0b5;
-        }
-        .indicator-dots {
-            font-size: 20px;
-            text-align: center;
-            color: #f9a825;
-            margin-top: 10px;
-        }
-        </style>
+        <div style='text-align: right; direction: rtl; padding-top: 15px;'>
+            <h1 style='color: #e67e22; margin-bottom: 0;'>Shero Whey</h1>
+            <h3 style='color: #2c3e50; font-weight: normal; margin-top: 5px;'>✨ آيس كريم صحي طبيعي مبتكر من شرش اللبن</h3>
+        </div>
     """, unsafe_allow_html=True)
 
-    # --- الهيدر العلوي والأقسام الثابتة ---
-    col_logo1, col_brand, col_logo2 = st.columns([1, 4, 1])
-    with col_logo1:
+with col_logo:
+    # عرض اللوجو المرفوع بدلاً من الأيقونة التقليدية
+    try:
+        st.image("logo.jpg", use_column_width=True)
+    except Exception:
+        # حل بديل في حال لم يجد ملف الصورة أثناء التشغيل التجريبي
         st.markdown("<h1 style='text-align: center;'>🍦</h1>", unsafe_allow_html=True)
-    with col_brand:
-        st.markdown("<h2 style='text-align: center; color: #e67e22;'>Shero Whey ✨ آيس كريم صحي طبيعي</h2>", unsafe_allow_html=True)
-    with col_logo2:
-        st.markdown("<h1 style='text-align: center;'>🥛</h1>", unsafe_allow_html=True)
 
-    # المميزات السريعة
-    st.markdown("""
-    <div style='display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;'>
-        <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🌿 شرش اللبن الطبيعي</span>
-        <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🥛 غني بالكالسيوم والبوتاسيوم</span>
-        <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🍊 فيتامينات ومضادات أكسدة</span>
-        <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>♻️ Zero Waste صديق للبيئة</span>
+# المميزات السريعة أسفل الهيدر مباشرة
+st.markdown("""
+<div style='display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; direction: rtl;'>
+    <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🌿 شرش اللبن الطبيعي</span>
+    <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🥛 غني بالكالسيوم والبوتاسيوم</span>
+    <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>🍊 فيتامينات ومضادات أكسدة</span>
+    <span style='background: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; color: #2e7d32; border: 2px solid #4caf50;'>♻️ Zero Waste صديق للبيئة</span>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# --- كود الـ Carousel (نفس المنطق السابق بدون تغيير) ---
+slides = [
+    {
+        "image": "https://images.unsplash.com/photo-1560512823-829485b8bf24?w=600&auto=format&fit=crop&q=80", 
+        "title": "ابتكار طعم المانجو والكركومين 🥭",
+        "description": "مزيج فريد ومدروس علمياً يجمع بين فوائد شرش اللبن الوظيفي ونكهة المانجو الطبيعية، معزز بمستخلص الكركومين النشط كمضاد أكسدة طبيعي يدعم صحتك وقوام الآيس كريم."
+    },
+    {
+        "image": "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=600&auto=format&fit=crop&q=80", 
+        "title": "انتعاش الفراولة والرمان 🍓",
+        "description": "تركيبة فاخرة ومبتكرة تمزج عصير الفراولة والرمان المركز مع بروتينات الشرش الحلو، لتمنحك قواماً كريمياً ناعماً ونكهة غنية بمضادات الأكسدة الطبيعية بدون مواد حافظة."
+    },
+    {
+        "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80", 
+        "title": "رؤية مستدامة وصديقة للبيئة ♻️",
+        "description": "مشروع Shero Whey يقوم على استغلال (الشرش الحلو السائل) الناتج من صناعة الألبان كبديل للمواد الصلبة اللادهنية (SNF)، لنساهم في تقليل الهلاك البيئي وتقديم منتج وظيفي أعلى في القيمة الغذائية."
+    }
+]
+
+if 'current_slide' not in st.session_state:
+    st.session_state.current_slide = 0
+
+def next_slide():
+    st.session_state.current_slide = (st.session_state.current_slide + 1) % len(slides)
+
+def prev_slide():
+    st.session_state.current_slide = (st.session_state.current_slide - 1) % len(slides)
+
+hero_col1, hero_col2 = st.columns([1.2, 1])
+current_data = slides[st.session_state.current_slide]
+
+with hero_col1:
+    st.markdown(f"""
+    <div class="hero-box" style="direction: rtl; text-align: right;">
+        <h2 style='color: #bf5b1c; margin-bottom: 15px;'>{current_data['title']}</h2>
+        <p style='font-size: 1.15rem; line-height: 1.7; color: #2c3e50;'>{current_data['description']}</p>
     </div>
     """, unsafe_allow_html=True)
+    
+    st.write("")
+    btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
+    with btn_col1:
+        st.button("⬅️ السابق", on_click=prev_slide, key="prev_btn", use_container_width=True)
+    with btn_col3:
+        st.button("التالي ➡️", on_click=next_slide, key="next_btn", use_container_width=True)
 
-    # --- إعداد بيانات الـ Carousel (الصور والنصوص المتغيرة) ---
-    slides = [
-        {
-            "image": "https://images.unsplash.com/photo-1560512823-829485b8bf24?w=600&auto=format&fit=crop&q=80", # صورة تعبيرية للمانجو
-            "title": "ابتكار طعم المانجو والكركومين 🥭",
-            "description": "مزيج فريد ومدروس علمياً يجمع بين فوائد شرش اللبن الوظيفي ونكهة المانجو الطبيعية، معزز بمستخلص الكركومين النشط كمضاد أكسدة طبيعي يدعم صحتك وقوام الآيس كريم."
-        },
-        {
-            "image": "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=600&auto=format&fit=crop&q=80", # صورة تعبيرية للفراولة
-            "title": "انتعاش الفراولة والرمان 🍓",
-            "description": "تركيبة فاخرة ومبتكرة تمزج عصير الفراولة والرمان المركز مع بروتينات الشرش الحلو، لتمنحك قواماً كريمياً ناعماً ونكهة غنية بمضادات الأكسدة الطبيعية بدون مواد حافظة."
-        },
-        {
-            "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600&auto=format&fit=crop&q=80", # صورة تكنولوجية/صناعية مناسبة للمشروع
-            "title": "رؤية مستدامة وصديقة للبيئة ♻️",
-            "description": "مشروع Shero Whey يقوم على استغلال (الشرش الحلو السائل) الناتج من صناعة الألبان كبديل للمواد الصلبة اللادهنية (SNF)، لنساهم في تقليل الهلاك البيئي وتقديم منتج وظيفي أعلى في القيمة الغذائية."
-        }
-    ]
-
-    # إدارة الـ Session State الخاصة بالـ Carousel
-    if 'current_slide' not in st.session_state:
-        st.session_state.current_slide = 0
-
-    # دالات التنقل
-    def next_slide():
-        st.session_state.current_slide = (st.session_state.current_slide + 1) % len(slides)
-
-    def prev_slide():
-        st.session_state.current_slide = (st.session_state.current_slide - 1) % len(slides)
-
-    # عرض الـ Carousel (القسم العلوي من السكيتش)
-    hero_col1, hero_col2 = st.columns([1.2, 1])
-    current_data = slides[st.session_state.current_slide]
-
-    with hero_col1:
-        # النص المتغير يوضع داخل التصميم المودرن
-        st.markdown(f"""
-        <div class="hero-box">
-            <h2 style='color: #bf5b1c; margin-bottom: 15px;'>{current_data['title']}</h2>
-            <p style='font-size: 1.15rem; line-height: 1.7; color: #2c3e50;'>{current_data['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # أزرار التحكم في السلايدر (الأسهم) أسفل النص
-        st.write("")
-        btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
-        with btn_col1:
-            st.button("⬅️ السابق", on_click=prev_slide, key="prev_btn", use_container_width=True)
-        with btn_col3:
-            st.button("التالي ➡️", on_click=next_slide, key="next_btn", use_container_width=True)
-
-    with hero_col2:
-        # الصورة المتغيرة
-        st.image(current_data['image'], use_column_width=True)
-        # النقط التفاعلية (Indicators) التي توضح السلايد الحالي
-        dots = "".join(["● " if i == st.session_state.current_slide else "○ " for i in range(len(slides))])
-        st.markdown(f"<div class='indicator-dots'>{dots}</div>", unsafe_allow_html=True)
-
-    st.markdown("<br><hr><br>", unsafe_allow_html=True)
+with hero_col2:
+    st.image(current_data['image'], use_column_width=True)
+    dots = "".join(["● " if i == st.session_state.current_slide else "○ " for i in range(len(slides))])
+    st.markdown(f"<div class='indicator-dots'>{dots}</div>", unsafe_allow_html=True)
 
     # --- القسم السفلي: كروت المنتجات (The Grid) ---
     st.markdown("<h3 style='text-align: center; color: #2c3e50; margin-bottom:25px;'>🍨 منتجاتنا المتوفرة</h3>", unsafe_allow_html=True)
