@@ -13,20 +13,35 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
     
-    html, body, [data-testid="stAppViewContainer"] {
+    /* فرض خط Cairo على كل جزئية ومكون بداخل الأبليكيشن بدون استثناء */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], .stMarkdown, p, div, span, label {
         font-family: 'Cairo', sans-serif !important;
         background-color: #0d0d11 !important;
         color: #ffffff !important;
         direction: rtl !important;
+        text-align: center !important;
     }
     
-    /* سنترة العناوين والنصوص المحددة بأمان لعدم كسر عناصر واجهة Streamlit */
-    .centered-title, .centered-text {
+    /* كلاس مخصص لإجبار سنترة العناوين والنصوص بداخل الحاويات */
+    .centered-title, .centered-text, .stMarkdown p {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
-        display: block !important;
         margin-left: auto !important;
         margin-right: auto !important;
+    }
+
+    /* سنترة إجبارية ومطلقة لجميع الصور المرفوعة (بما فيها صورة الفريق والعبوات) */
+    [data-testid="stImage"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+    }
+    [data-testid="stImage"] img {
+        margin: 0 auto !important;
+        border-radius: 12px !important;
     }
 
     /* تأمين التبويبات العلوية وظهورها بكامل عرض الشاشة */
