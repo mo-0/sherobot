@@ -119,6 +119,8 @@ with hero_col2:
     
     # --- العمود الأول: المانجو والكركومين ---
     with prod_col1:
+        # الكود القديم كان st.markdown(""" ... """)
+        # عدله وخليه كدا:
         st.markdown("""
         <div class="product-card">
             <span style="background:#e67e22; padding:4px 15px; border-radius:40px; color:white; font-size: 0.9rem;">⭐ الأكثر طلباً</span>
@@ -126,7 +128,7 @@ with hero_col2:
             
             <img src="https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&auto=format&fit=crop&q=80" style="width:100%; border-radius:15px; margin-bottom:15px;" />
             
-            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825;">
+            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825; color: #2c3e50;">
                 <p><b>📋 المكونات:</b> شرش سائل، بيوريه مانجو طبيعي، سكر، مستخلص كركومين نشط، مثبتات قوام طبيعية.</p>
                 <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
                 <p style="font-weight: bold; color: #bf5b1c; margin-bottom: 5px;">📊 الحقائق الغذائية (لكل حصة):</p>
@@ -138,7 +140,7 @@ with hero_col2:
                 </ul>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True) # <-- السطر ده هو اللي هيشيل الكود المكتوب ويظهر التصميم المظبوط
         
         # زرار "أطلب" المنفصل أسفل كارت المانجو
         st.write("")
@@ -154,7 +156,7 @@ with hero_col2:
             
             <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=400&auto=format&fit=crop&q=80" style="width:100%; border-radius:15px; margin-bottom:15px;" />
             
-            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825;">
+            <div style="direction: rtl; text-align: right; background: #fffcf7; padding: 15px; border-radius: 12px; border: 1px dashed #f9a825; color: #2c3e50;">
                 <p><b>📋 المكونات:</b> شرش سائل، سكر، بيوريه فراولة، عصير رمان طبيعي، كريمة خفق، صمغ السليلوز E466.</p>
                 <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
                 <p style="font-weight: bold; color: #bf5b1c; margin-bottom: 5px;">📊 الحقائق الغذائية (الحصة 92.6 جرام):</p>
@@ -166,7 +168,7 @@ with hero_col2:
                 </ul>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True) # <-- السطر ده هو اللي هيشيل الكود المكتوب ويظهر التصميم المظبوط
         
         # زرار "أطلب" المنفصل أسفل كارت الفراولة
         st.write("")
