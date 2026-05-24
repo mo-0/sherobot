@@ -11,7 +11,7 @@ st.set_page_config(page_title="SheroWhey | ابتكار أوكتانوفا 2026"
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap');
     
     /* ضبط أساس الصفحة والفونت الموحد */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
@@ -179,7 +179,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: الكتالوج والـ Carousel التفاعلي (عرض كامل مرن)
+# التبويب الأول: الكتالوج والـ Carousel التفاعلي
 # ==========================================
 with tab1:
     st.write("")
@@ -233,7 +233,7 @@ with tab1:
     
     st.markdown("<h2 class='centered-title' style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
     
-    # عبوة المانجو
+    # عبوة المانجو (تم تعديل الامتداد لـ .png)
     st.markdown("<div class='science-box'>", unsafe_allow_html=True)
     st.markdown("""
         <h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
@@ -242,9 +242,9 @@ with tab1:
     """, unsafe_allow_html=True)
     
     try:
-        st.image("mango_pack.jpg", caption="عبوة شربت المانجو والكركمين 120 مل", use_container_width=True)
+        st.image("mango_pack.png", caption="عبوة شربت المانجو والكركمين 120 مل", use_container_width=True)
     except Exception:
-        st.markdown("<div class='photo-placeholder'>💡 [يرجى رفع ملف باسم mango_pack.jpg ليظهر هنا بكامل العرض المتاح]</div>", unsafe_allow_html=True)
+        st.markdown("<div class='photo-placeholder'>💡 [يرجى التأكد من رفع ملف باسم mango_pack.png ليظهر هنا]</div>", unsafe_allow_html=True)
     
     st.markdown("<b style='color:#f39c12;' class='centered-title'>الحقائق الغذائية الرسمية (حصة 100 جرام):</b>", unsafe_allow_html=True)
     st.table({
@@ -259,7 +259,7 @@ with tab1:
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
-    # عبوة الفراولة
+    # عبوة الفراولة (تم تعديل الامتداد لـ .png)
     st.markdown("<div class='science-box'>", unsafe_allow_html=True)
     st.markdown("""
         <h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>
@@ -268,9 +268,9 @@ with tab1:
     """, unsafe_allow_html=True)
     
     try:
-        st.image("strawberry_pack.jpg", caption="عبوة شربت الفراولة والرمان 120 مل", use_container_width=True)
+        st.image("strawberry_pack.png", caption="عبوة شربت الفراولة والرمان 120 مل", use_container_width=True)
     except Exception:
-        st.markdown("<div class='photo-placeholder'>💡 [يرجى رفع ملف باسم strawberry_pack.jpg ليظهر هنا بكامل العرض المتاح]</div>", unsafe_allow_html=True)
+        st.markdown("<div class='photo-placeholder'>💡 [يرجى التأكد من رفع ملف باسم strawberry_pack.png ليظهر هنا]</div>", unsafe_allow_html=True)
     
     st.markdown("<b style='color:#f39c12;' class='centered-title'>الحقائق الغذائية الرسمية (حصة 92.6 جرام):</b>", unsafe_allow_html=True)
     st.table({
@@ -284,7 +284,7 @@ with tab1:
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: التأصيل العلمي والاستدامة (Full Width Boxes)
+# التبويب الثاني: التأصيل العلمي والاستدامة
 # ==========================================
 with tab2:
     st.write("")
@@ -302,7 +302,7 @@ with tab2:
     try:
         st.image("team_photo.jpg", caption="فريق عمل مشروع شيرو واي 2026 برحاب الكلية", use_container_width=True)
     except Exception:
-        st.markdown("<div class='photo-placeholder' style='max-width:800px;'>💡 [يرجى رفع ملف باسم team_photo.jpg لتظهر هنا في المنتصف تماماً وبشكل مرن]</div>", unsafe_allow_html=True)
+        st.markdown("<div class='photo-placeholder' style='max-width:800px;'>💡 [يرجى رفع ملف باسم team_photo.jpg لتظهر هنا في المنتصف تماماً]</div>", unsafe_allow_html=True)
         
     st.markdown("""
     <div class='science-box'>
@@ -339,7 +339,7 @@ with tab2:
     <div class='science-box'>
         <span class='sub-heading'>🌍 الاستدامة والبيئة (OUR SUSTAINABLE PLANET)</span>
         <p style='font-size:15px; line-height:1.8; margin:0;'>
-            يُعد "الشرش السائل" أحد أضخم النواتج الثانوية المتخلفة عن صناعة الجبن، ويمثل التخلص منه دون معالجة عبئاً بيئياً ثقيلاً ومصدراً للتلوث العضوي العالي لشبكات الصرف ومجاري المياه (ارتفاع معامل BOD و COD). نجح الفريق في تدوير هذا التحدي عبر استبدال المكون المائي الكامل والمواد الصلبة اللادهنية (SNF) للبن الفرز في الشربت بالشرش السائل، محققاً صفر نفايات (Zero Waste) ومساهماً في صياغة اقتصاد دائري ومستدام للقطاع الغذائي.
+            يُعد "الشرش السائل" أحد أضخم النواتج الثانوية المتخلفة عن صناعة الجبن، ويمثل التخلص منه دون معالجة عبئاً بيئياً ثقيلاً ومصدراً للتلوث العضوي العالي لشبكات الصرف ومجاري المياه (ارتفاع معامل BOD و COD). نجح الفريق في تدوير هذا التحدي عبر استبدال المكون المائي الكامل والمواد الصلبة اللادهنية (SNF) للبن الفرز في الشربت بالشرش السائل, محققاً صفر نفايات (Zero Waste) ومساهماً في صياغة اقتصاد دائري ومستدام للقطاع الغذائي.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -355,12 +355,11 @@ with tab2:
     """, unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي مع تنظيف كامل للأيقونات المتداخلة (No Shortcode Bug)
+# التبويب الثالث: الشات الذكي مع SheroBot
 # ==========================================
 with tab3:
     st.markdown("<h3 class='centered-title'>💬 SheroBot - مستشارك الذكي</h3>", unsafe_allow_html=True)
     
-    # زر مسح السجل النظيف تماماً بالمنتصف
     chat_control_col1, chat_control_col2, chat_control_col3 = st.columns([1, 1.2, 1])
     with chat_control_col2:
         if st.button("🗑️ مسح سجل المحادثة بالكامل", use_container_width=True, key="clear_chat_button"):
@@ -370,7 +369,6 @@ with tab3:
 
     st.write("")
     
-    # عرض تاريخ الشات النظيف والمفلتر بدون شورت كودز مشوهة
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]): 
             st.markdown(message["text"])
@@ -399,7 +397,6 @@ with tab3:
                 raw_text = "خط الاتصال مشغول حالياً يا فندم، تفضل بالانتقال للتبويب الأخير مباشرة لإتمام طلبك."
 
         if raw_text:
-            # تنظيف تلقائي مزدوج لمنع ظهور أي نصوص تقنية مشوهة في الواجهة مثل الـ Shortcodes
             clean_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             clean_display_text = clean_display_text.replace("smart_toy", "").replace("face", "").replace(":", "")
             
