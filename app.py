@@ -213,60 +213,95 @@ with tab2:
 
 
 # ==========================================
-# التبويب الثالث: لوحة التحكم والطلب السريع (Streamlit Native)
+# التبويب الثالث: لوحة التحكم والطلب السريع المطور (متعدد المنتجات)
 # ==========================================
 with tab3:
     st.markdown("### 📋 نموذج إتمام الشراء السريع المباشر")
-    st.write("إذا واجهت أي مشكلة في إرسال الطلب من التبويب الأول، يمكنك ملء الاستمارة هنا والتنفيذ فوراً:")
+    st.write("يمكنك تحديد الكميات المطلوبة من كل نكهة وتحديث الطلب فوراً:")
 
     st.markdown("---")
-    product_selection = st.radio(
-        "🍦 اختر النكهة المفضلة:",
-        ["Shero Whey مانجو والكركومين", "Shero Whey فراولة ورمان"],
-        index=0
-    )
     
+    st.markdown("#### 🍦 اختر النكهات والكميات المطلوبة:")
+    
+    # تقسيم المساحة لعرض النكهتين جنب بعض لتحديد الكمية
+    col_mango, col_strawberry = st.columns(2)
+    
+    mango_ordered = False
+    mango_qty = 0
+    strawberry_ordered = False
+    strawberry_qty = 0
+    
+    with col_mango:
+        st.markdown("<div style='background: #fffcf7; padding: 15px; border-radius: 10px; border: 1px solid #ffe0b5;'>", unsafe_allow_html=True)
+        want_mango = st.checkbox("🥭 نكهة المانجو والكركومين", key="want_m")
+        if want_mango:
+            mango_ordered = True
+            mango_qty = st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, value=1, key="qty_m")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    with col_strawberry:
+        st.markdown("<div style='background: #fffcf7; padding: 15px; border-radius: 10px; border: 1px solid #ffe0b5;'>", unsafe_allow_html=True)
+        want_strawberry = st.checkbox("🍓 نكهة الفراولة والرمان", key="want_s")
+        if want_strawberry:
+            strawberry_ordered = True
+            strawberry_qty = st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, value=1, key="qty_s")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # بيانات العميل الأساسية
     customer_name = st.text_input("👤 الاسم الكامل (ثلاثي):", placeholder="اكتب اسمك هنا")
     customer_phone = st.text_input("📱 رقم الهاتف للتواصل:", placeholder="010xxxxxxxx")
     customer_address = st.text_area("🏠 العنوان بالتفصيل:", placeholder="المدينة، الحي، الشارع، رقم المنزل")
     
-    order_quantity = st.selectbox(
-        "🔢 اختر الكمية المطلوبة:",
-        ["كوب واحد", "كوبان", "3 أكواب", "4 أكواب", "5 أكواب فأكثر"]
-    )
-    
     order_notes = st.text_area("💬 ملاحظات إضافية:", placeholder="موعد التوصيل المناسب أو تعليمات خاصة")
     customer_rating = st.slider("⭐ قيم تجربة التسوق من 1 إلى 5 نجوم:", 1, 5, 5)
 
-    msg_template = f"""🛒 *طلب جديد من Shero Whey* 🛒
+    # تجهيز تفاصيل المنتجات بناءً على الاختيارات
+    product_details = ""
+    if mango_ordered:
+        product_details += f"• Shero Whey مانجو والكركومين [الكمية: {mango_qty}]\n"
+    if strawberry_ordered:
+        product_details += f"• Shero Whey فراولة ورمان [الكمية: {strawberry_qty}]\n"
+        
+    if not mango_ordered and not strawberry_ordered:
+        product_details = "• لم يتم اختيار أي نكهة بعد!\n"
+
+    # بناء نص الرسالة المحدثة بالفاتورة الجديدة
+    msg_template = f"""🛒 *طلب جديد ومتنوع من Shero Whey* 🛒
 
 👤 الاسم: {customer_name}
 📱 الهاتف: {customer_phone}
 🏠 العنوان: {customer_address}
-🍦 المنتج: {product_selection}
-🔢 الكمية: {order_quantity}
+
+🍦 تفاصيل الطلبية:
+{product_details}
 ⭐ التقييم: {customer_rating} من 5 نجوم
 
  📝 ملاحظات إضافية:
 {order_notes if order_notes.strip() else "لا توجد ملاحظات"}
 ──────────────────────
-يرجى تأكيد الطلب، شكراً لكم! 🙏"""
+يرجى تأكيد الطلب وحساب الإجمالي، شكراً لكم! 🙏"""
 
+    # تحويل النص لـ URL encoded للروابط الخارجية
     encoded_msg = urllib.parse.quote(msg_template)
     whatsapp_url = f"https://wa.me/201090416662?text={encoded_msg}"
     
-    email_subject = urllib.parse.quote(f"طلب شراء جديد - Shero Whey من {customer_name}")
+    email_subject = urllib.parse.quote(f"طلب شراء متعدد جديد - Shero Whey من {customer_name}")
     email_body = urllib.parse.quote(msg_template)
     gmail_url = f"https://mail.google.com/mail/?view=cm&fs=1&to=sheroway78@gmail.com&su={email_subject}&body={email_body}"
 
+    # أزرار الإجراءات الفورية
     st.markdown("#### 🚀 أزرار التنفيذ السريع:")
     col1, col2 = st.columns(2)
     
     with col1:
-        st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True)
+        # تعطيل الزرار لو العميل مأختارش أي منتج خالص
+        st.link_button("📱 إرسال الطلب عبر الواتساب", whatsapp_url, use_container_width=True, disabled=(not mango_ordered and not strawberry_ordered))
         
     with col2:
-        st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True)
+        st.link_button("📧 إرسال الطلب عبر Gmail", gmail_url, use_container_width=True, disabled=(not mango_ordered and not strawberry_ordered))
 
-    with st.expander("👀 معاينة نص الرسالة اللي هتروح للدعم الفني"):
+    # معاينة الفاتورة قبل الإرسال
+    with st.expander("👀 معاينة نص الفاتورة المتنوعة قبل الإرسال"):
         st.code(msg_template, language="markdown")
