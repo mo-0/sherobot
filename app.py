@@ -52,7 +52,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 初始化 الـ Session States للطلبات عشان البوت وبايثون يقرأوا منها
+# تهيئة الـ الـ Session States للتحكم المباشر في الـ Widgets عن طريق الـ Keys
 if "want_m" not in st.session_state:
     st.session_state.want_m = False
 if "qty_m" not in st.session_state:
@@ -170,7 +170,8 @@ with tab1:
         st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "الكربوهيدرات"], "الكمية لكل حصة": ["112 kcal", "0.95 g", "0.12 g", "25.10 g"]})
         if st.button("🛍️ أطلب نكهة المانجو الآن", key="btn_m_native", use_container_width=True):
             st.session_state.want_m = True
-            st.success("🎯 تم إضافة المانجو لعربتك في التبويب الثالث!")
+            st.toast("🎯 تم إضافة المانجو لعربتك!")
+            st.rerun()
 
     with prod_col2:
         st.markdown("<h3 style='color: #f39c12; text-align: center;'>🍓 SheroWhey فراولة ورمان</h3>", unsafe_allow_html=True)
@@ -179,24 +180,24 @@ with tab1:
         st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الكالسيوم", "البوتاسيوم"], "الكمية (حصّة 92.6 جرام)": ["116.42 kcal", "1.02 g", "0.10 g", "26.71 g", "19.45 mg", "165.01 mg"]})
         if st.button("🛍️ أطلب نكهة الفراولة الآن", key="btn_s_native", use_container_width=True):
             st.session_state.want_s = True
-            st.success("🎯 تم إضافة الفراولة لعربتك في التبويب الثالث!")
+            st.toast("🎯 تم إضافة الفراولة لعربتك!")
+            st.rerun()
 
     st.markdown("<br><br><div style='text-align: center; color: #888888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px;'>© octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey</div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثاني: البوت المطور (مع ميزة المزامنة الخلفية)
+# التبويب الثاني: البوت المطور (مع ميزة المزامنة الإجبارية الفورية)
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
     
-    if st.button("🔄 محادثة جديدة / New Chat", key="reset_btn"):
+    if st.button("🔄 محادثة جديدة / New Chat", key="reset_chat_btn"):
         st.session_state.chat = model.start_chat(history=[])
         st.rerun()
 
     if "chat" not in st.session_state:
         st.session_state.chat = model.start_chat(history=[])
 
-    # عرض الرسائل المخزنة في الـ History بعد تنظيف الأكواد المخفية لكي لا تظهر للمستخدم
     for message in st.session_state.chat.history:
         role = "assistant" if message.role == "model" else "user"
         clean_text = re.sub(r'\[SET_ORDER:.*?\]', '', message.parts[0].text)
@@ -211,12 +212,13 @@ with tab2:
             response = st.session_state.chat.send_message(prompt)
             raw_text = response.text
             
-            # سحر المزامنة: البحث عن كود الطلب الجاي من جيمناي باستخدام Regex
+            # مسح واستخراج كود المزامنة بـ Regex
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
                 s_qty = int(match.group(2))
                 
+                # تحديث قيم الـ Session State مباشرة قبل الـ Rerun لإجبار بايثون على تحديث الـ UI لايف
                 if m_qty > 0:
                     st.session_state.want_m = True
                     st.session_state.qty_m = m_qty
@@ -226,17 +228,19 @@ with tab2:
                 
                 st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً بناءً على كلامك مع البوت!")
 
-            # مسح كود المزامنة من النص قبل ما يظهر في واجهة المستخدم عشان المنظر يبان نظيف
             final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             
             with st.chat_message("assistant"):
                 st.markdown(final_display_text)
+            
+            # عمل Rerun فوراً عشان التبويب الثالث يقرأ التحديث الجديد وميبقاش متأخر خطوة
+            st.rerun()
                 
         except Exception as e:
             st.error(f"حصلت مشكلة في الاتصال: {e}")
 
 # ==========================================
-# التبويب الثالث: لوحة التحكم والطلب السريع (مربوطة بالـ Session State لايف)
+# التبويب الثالث: لوحة التحكم والطلب السريع (إصلاح مشكلة الـ UI اللحظي)
 # ==========================================
 with tab3:
     st.markdown("### 📋 نموذج إتمام الشراء السريع المباشر")
@@ -249,21 +253,17 @@ with tab3:
     
     with col_mango:
         st.markdown("<div style='background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333333;'>", unsafe_allow_html=True)
-        # ميزة ربط القيمة بالـ Session state مباشرة
-        want_mango = st.checkbox("🥭 نكهة المانجو والكركمين", key="want_m_ui", value=st.session_state.want_m)
-        st.session_state.want_m = want_mango
+        # الربط باستخدام الـ Key المباشر عشان الـ Streamlit يستجيب فوراً للتغيير الجاي من الشات
+        want_mango = st.checkbox("🥭 نكهة المانجو والكركمين", key="want_m")
         if st.session_state.want_m:
-            mango_qty = st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, value=st.session_state.qty_m, key="qty_m_ui")
-            st.session_state.qty_m = mango_qty
+            st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_m")
         st.markdown("</div>", unsafe_allow_html=True)
         
     with col_strawberry:
         st.markdown("<div style='background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333333;'>", unsafe_allow_html=True)
-        want_strawberry = st.checkbox("🍓 نكهة الفراولة والرمان", key="want_s_ui", value=st.session_state.want_s)
-        st.session_state.want_s = want_strawberry
+        want_strawberry = st.checkbox("🍓 نكهة الفراولة والرمان", key="want_s")
         if st.session_state.want_s:
-            strawberry_qty = st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, value=st.session_state.qty_s, key="qty_s_ui")
-            st.session_state.qty_s = strawberry_qty
+            st.number_input("الكمية (عدد الأكواب):", min_value=1, max_value=50, key="qty_s")
         st.markdown("</div>", unsafe_allow_html=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
