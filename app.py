@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 import google.generativeai as genai
 import urllib.parse  # مخصصة لتنسيق وتوليد روابط الواتساب والإيميل بشكل سليم
 import re  # لمسح واستخراج أكواد الطلبات التلقائية من البوت
-from openai import OpenAI  # 1. استيراد المكتبة الخاصة بالنموذج الاحتياطي (ميتا لاما)
+from openai import OpenAI  # استيراد المكتبة الخاصة بالنموذج الاحتياطي (ميتا لاما)
 
 # ==========================================
 # 1. إعدادات الصفحة وجعلها متناسقة مع الـ Dark Mode
@@ -66,7 +66,6 @@ if "qty_s" not in st.session_state:
 # ==========================================
 # 2. إعدادات الـ APIs (جوجل + ميتا لاما)
 # ==========================================
-# إعداد السيرفر الأساسي (جيمناي من جوجل)
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 customer_service_persona = """
@@ -78,7 +77,6 @@ CRITICAL AUTOMATION RULE:
 If the user explicitly mentions they want to order a specific flavor and quantity (e.g., "أريد 2 كوب مانجو", "I want 3 strawberry cups"), you MUST append a hidden command at the very end of your response text in this exact format:
 [SET_ORDER: MANGO=X, STRAWBERRY=Y]
 Replace X and Y with the integer quantities requested. If a flavor is not ordered, set it to 0.
-Example: If they want 2 mango, append: [SET_ORDER: MANGO=2, STRAWBERRY=0]
 
 Language Rules:
 1. If asked in Arabic, reply in friendly Egyptian Arabic.
@@ -87,7 +85,7 @@ Always be polite and let them know that you have prepared their cart in the thir
 """
 model_gemini = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
 
-# 2. إعداد السيرفر الاحتياطي (ميتا لاما عبر منصة Groq) باستخدام المفتاح اللي ضفناه في السيكرتس
+# إعداد السيرفر الاحتياطي (ميتا لاما عبر منصة Groq) بالموديل المتاح حالياً
 client_meta = None
 if "GROQ_API_KEY" in st.secrets:
     client_meta = OpenAI(
@@ -103,7 +101,7 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: الويب سايت التفاعلي (Native Streamlit Elements)
+# التبويب الأول: الويب سايت التفاعلي (تم تحديث use_container_width)
 # ==========================================
 with tab1:
     col_brand, col_logo = st.columns([4, 1])
@@ -116,7 +114,7 @@ with tab1:
         """, unsafe_allow_html=True)
     with col_logo:
         try:
-            st.image("logo.jpg", use_column_width=True)
+            st.image("logo.jpg", use_container_width=True)
         except Exception:
             st.markdown("<h1 style='text-align: center;'>🍦</h1>", unsafe_allow_html=True)
 
@@ -157,7 +155,7 @@ with tab1:
         with btn_col3: st.button("التالي ➡️", on_click=next_slide, key="next_btn", use_container_width=True)
 
     with hero_col2:
-        st.image(current_data['image'], use_column_width=True)
+        st.image(current_data['image'], use_container_width=True)
         dots = "".join(["● " if i == st.session_state.current_slide else "○ " for i in range(len(slides))])
         st.markdown(f"<div class='indicator-dots'>{dots}</div>", unsafe_allow_html=True)
 
@@ -168,7 +166,7 @@ with tab1:
     
     with prod_col1:
         st.markdown("<h3 style='color: #f39c12; text-align: center;'>🥭 SheroWhey مانجو وكركمين</h3>", unsafe_allow_html=True)
-        st.image("https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&auto=format&fit=crop&q=80", use_column_width=True)
+        st.image("https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&auto=format&fit=crop&q=80", use_container_width=True)
         st.markdown("<div style='direction: rtl; text-align: right; padding: 10px;'><p><b>📋 المكونات:</b> شرش سائل طبيعي، بيوريه مانجو طبيعي، سكر، مستخلص كركمين نشط، مثبتات قوام طبيعية.</p></div>", unsafe_allow_html=True)
         st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "الكربوهيدرات"], "الكمية لكل حصة": ["112 kcal", "0.95 g", "0.12 g", "25.10 g"]})
         if st.button("🛍️ أطلب نكهة المانجو الآن", key="btn_m_native", use_container_width=True):
@@ -178,7 +176,7 @@ with tab1:
 
     with prod_col2:
         st.markdown("<h3 style='color: #f39c12; text-align: center;'>🍓 SheroWhey فراولة ورمان</h3>", unsafe_allow_html=True)
-        st.image("https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=400&auto=format&fit=crop&q=80", use_column_width=True)
+        st.image("https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=400&auto=format&fit=crop&q=80", use_container_width=True)
         st.markdown("<div style='direction: rtl; text-align: right; padding: 10px;'><p><b>📋 المكونات:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة طبيعي، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة (E466 CMC)، حمض الستريك.</p></div>", unsafe_allow_html=True)
         st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الكالسيوم", "البوتاسيوم"], "الكمية (حصّة 92.6 جرام)": ["116.42 kcal", "1.02 g", "0.10 g", "26.71 g", "19.45 mg", "165.01 mg"]})
         if st.button("🛍️ أطلب نكهة الفراولة الآن", key="btn_s_native", use_container_width=True):
@@ -186,8 +184,10 @@ with tab1:
             st.toast("🎯 تم إضافة الفراولة لعربتك!")
             st.rerun()
 
+    st.markdown("<br><br><div style='text-align: center; color: #888888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 15px;'>© octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey</div>", unsafe_allow_html=True)
+
 # ==========================================
-# التبويب الثاني: البوت المطور (نسخة الـ Bulletproof ضد التعليق)
+# التبويب الثاني: البوت المطور والآمن تماماً ضد الانقطاع
 # ==========================================
 with tab2:
     st.markdown("### 🍦 SheroBot - المساعد الذكي التفاعلي")
@@ -199,7 +199,6 @@ with tab2:
     if "chat" not in st.session_state:
         st.session_state.chat = model_gemini.start_chat(history=[])
 
-    # عرض تاريخ الشات القديم وتنظيفه من الأكواد المخفية
     for message in st.session_state.chat.history:
         role = "assistant" if message.role == "model" else "user"
         clean_text = re.sub(r'\[SET_ORDER:.*?\]', '', message.parts[0].text)
@@ -212,37 +211,35 @@ with tab2:
         
         raw_text = ""
         
-        # ─── 1. محاولة إرسال الرسالة لـ جـيـمـنـاي (الأساسي) ───
+        # ─── 1. محاولة استدعاء جـيـمـنـاي (الأساسي) ───
         try:
-            response = st.session_state.chat.send_message(prompt)
+            response = model_gemini.generate_content(prompt) # تعديل الاستدعاء لضمان الأمان في الـ Fallback
             raw_text = response.text
             
-        # ─── 2. خطة الدعم الاحتياطية الفورية (Meta Llama) ───
+        # ─── 2. في حالة حدوث أي مشكلة، الانتقال الفوري لـ مـيـتـا لاما (النشط حالياً لايف) ───
         except Exception as e:
             if client_meta is not None:
-                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي...")
+                st.toast("⚠️ سيرفر جوجل مشغول، جاري الاستجابة عبر السيرفر الاحتياطي (Meta Llama)...")
                 try:
-                    # استخدام اسم الموديل المتاح والنشط حالياً لايف على Groq
                     meta_response = client_meta.chat.completions.create(
-                        model="llama-3.3-70b-versatile",
+                        model="llama-3.3-70b-versatile", # تم تعديل الاسم لـ النسخة النشطة المتاحة في حسابك
                         messages=[
                             {"role": "system", "content": customer_service_persona},
                             {"role": "user", "content": prompt}
                         ]
                     )
                     raw_text = meta_response.choices[0].message.content
-                    
-                    # مزامنة الرد في تاريخ شات جيمناي للحفاظ على السياق
-                    st.session_state.chat.history.append(genai.types.Content(role="user", parts=[genai.types.Part.from_text(prompt)]))
-                    st.session_state.chat.history.append(genai.types.Content(role="model", parts=[genai.types.Part.from_text(raw_text)]))
                 except Exception as meta_err:
-                    raw_text = "⚠️ عذراً يا فندم، ضغط السيرفرات عالي جداً حالياً. لكن تقدر تتصفح المنتجات وتطلب أوتوماتيك من التبويب الأول أو الثالث بكل سهولة وسنتواصل معك فوراً! 🍦"
+                    raw_text = f"⚠️ عذراً، ضغط السيرفرات عالي حالياً. لكن تقدر تطلب وتتصفح النكهات من التبويب الثالث مباشرة وسنتواصل معك!"
             else:
-                raw_text = "⚠️ خط اتصال السيرفرات مشغول حالياً، فضلاً استخدم نموذج الطلب السريع في التبويب الثالث لإتمام طلبك مباشرة!"
+                raw_text = "⚠️ السيرفر الأساسي غير متاح حالياً، فضلاً استخدم نموذج الطلب السريع في التبويب الثالث لإتمام طلبك مباشرة!"
 
-        # ─── 3. عرض الرد النهائي وتحديث السلة لايف ───
+        # ─── 3. عرض الرد وتحديث البيانات والـ History ───
         if raw_text:
-            # استخراج النية والكميات بـ Regex
+            # تحديث الـ History يدوياً لضمان عدم حدوث Loop في الكاش
+            st.session_state.chat.history.append(genai.types.Content(role="user", parts=[genai.types.Part.from_text(prompt)]))
+            st.session_state.chat.history.append(genai.types.Content(role="model", parts=[genai.types.Part.from_text(raw_text)]))
+
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1))
@@ -255,7 +252,6 @@ with tab2:
                     st.session_state.qty_s = s_qty
                 st.toast("🛒 تم تحديث سلة مشترياتك تلقائياً!")
 
-            # تنظيف النص النهائي من التاجز المخفية وعرضه
             final_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             with st.chat_message("assistant"):
                 st.markdown(final_display_text)
