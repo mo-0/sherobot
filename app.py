@@ -224,7 +224,7 @@ with tab2:
                 try:
                     # استدعاء نموذج لاما 3 من ميتا عبر Groq
                     meta_response = client_meta.chat.completions.create(
-                      model="llama-3.3-70b-specdec",
+                      model="llama-3.1-8b-instant",
                         messages=[
                             {"role": "system", "content": customer_service_persona},
                             {"role": "user", "content": prompt}
