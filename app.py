@@ -52,28 +52,43 @@ st.markdown("""
         border-radius: 12px;
     }
 
-    /* تنسيق التبويبات العلوية (Tabs) */
+/* 🛠️ هندسة التبويبات (Tabs) الجديدة كلياً لتظهر كأزرار تفاعلية بارزة ومفهومة للجميع */
     div[data-testid="stTabs"] {
         width: 100% !important;
-        margin-top: 30px !important;
+        margin-top: 25px !important;
+        background-color: #111116 !important;
+        padding: 8px !important;
+        border-radius: 16px !important;
+        border: 1px solid #1f1f2e !important;
     }
     div[data-testid="stTabs"] button {
         font-family: 'Cairo', sans-serif !important;
         font-size: 15px !important;
-        font-weight: 600 !important;
-        color: #8c8c9a !important;
-        background-color: #14141c !important;
-        border: 1px solid #1f1f2e !important;
-        padding: 12px 15px !important;
+        font-weight: 700 !important;
+        color: #a0a0ab !important;
+        background-color: #161622 !important;
+        border: 1px solid #222232 !important;
+        border-radius: 10px !important;
+        padding: 12px 20px !important;
+        margin: 0 4px !important;
         flex-grow: 1 !important;
         text-align: center !important;
+        transition: all 0.3s ease-in-out !important; /* حركة ناعمة عند الانتقال أو الوقوف */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
     }
-    div[data-testid="stTabs"] button[aria-selected="true"] {
-        color: #f39c12 !important;
+    /* تأثير منور عند تمرير الماوس لتنبيه المستخدم أن التبويب قابل للضغط */
+    div[data-testid="stTabs"] button:hover {
+        color: #ffffff !important;
+        border-color: #f39c12 !important;
         background-color: #1c1c28 !important;
-        border-bottom: 3px solid #f39c12 !important;
     }
-    
+    /* ستايل التبويب النشط والمختار حالياً باللون الأصفر */
+    div[data-testid="stTabs"] button[aria-selected="true"] {
+        color: #0d0d11 !important;
+        background-color: #f39c12 !important; /* لون البراند الأصفر الزاهي */
+        border-color: #f39c12 !important;
+        font-weight: 900 !important;
+    }
     /* صناديق ومربعات التأصيل العلمي المتراصة */
     .science-box {
         background: linear-gradient(145deg, #14141c, #1a1a26) !important;
