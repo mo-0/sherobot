@@ -283,6 +283,7 @@ with tab1:
 with tab2:
     st.write("")
     st.markdown("<h2 class='centered-title' style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية الكاملة للمشروع</h2>", unsafe_allow_html=True)
+    st.markdown("<b style='color:#f39c12;'>📸 فريق البحث العلمي (أوكتانوفا 2026)</b>", unsafe_allow_html=True)
     try: st.image("team_photo.jpg", use_container_width=True)
     except Exception: st.info("💡 يرجى رفع ملف باسم team_photo.jpg لتظهر الصورة بالمنتصف")
         
