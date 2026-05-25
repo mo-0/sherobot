@@ -242,7 +242,6 @@ with tab1:
     col_right, col_left = st.columns(2, gap="large")
     
     with col_right:
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
         st.markdown("""
             <h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
@@ -260,7 +259,6 @@ with tab1:
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_left:
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
         st.markdown("""
             <h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
