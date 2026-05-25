@@ -422,7 +422,7 @@ with tab3:
             st.rerun()
 
 # ==========================================
-# التبويب الرابع: استمارة الشحن مع الخريطة التفاعلية
+# التبويب الرابع: استمارة الشحن والطلب السريع مع الخريطة التفاعلية
 # ==========================================
 with tab4:
     st.markdown("### 📋 تأكيد الفاتورة وإتمام الطلب السريع")
@@ -430,24 +430,35 @@ with tab4:
     col_order_m, col_order_s = st.columns(2, gap="large")
     with col_order_m:
         st.checkbox("🥭 عبوة شربت المانجو والكركمين", key="want_m")
-        if st.session_state.want_m: st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_m")
+        if st.session_state.want_m: 
+            st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_m")
+            
     with col_order_s:
         st.checkbox("🍓 عبوة شربت الفراولة والرمان", key="want_s")
-        if st.session_state.want_s: st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_s")
+        if st.session_state.want_s: 
+            st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_s")
         
     st.markdown("---")
     st.markdown("#### 🗺️ حدد موقع التوصيل على الخريطة (اضغط لتثبيت الدبوس)")
     
     m = folium.Map(location=st.session_state.map_center, zoom_start=11)
     if st.session_state.clicked_coords:
-        folium.Marker(location=st.session_state.clicked_coords, popup="موقع الشحن المختار", icon=folium.Icon(color="orange", icon="info-sign")).add_to(m)
+        folium.Marker(
+            location=st.session_state.clicked_coords, 
+            popup="موقع الشحن المختار", 
+            icon=folium.Icon(color="orange", icon="info-sign")
+        ).add_to(m)
         
-   map_data = st_folium(m, width=None, height=400, use_container_width=True)
+    # استدعاء الخريطة بالتوزيعة البرمجية المرنة والمظبوطة هندسياً بالملي
+    map_data = st_folium(m, height=400, use_container_width=True)
+    
     if map_data and map_data.get("last_clicked"):
         clicked = map_data["last_clicked"]
         new_coords = [clicked["lat"], clicked["lng"]]
         if st.session_state.clicked_coords != new_coords:
-            st.session_state.clicked_coords = new_coords; st.toast("📌 تم تثبيت دبوس الموقع بنجاح!"); st.rerun()
+            st.session_state.clicked_coords = new_coords
+            st.toast("📌 تم تثبيت دبوس الموقع بنجاح!")
+            st.rerun()
 
     st.markdown("#### 👤 بيانات الشحن والتواصل")
     c_col1, c_col2 = st.columns(2)
@@ -463,15 +474,20 @@ with tab4:
             customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", placeholder="اضغط على الخريطة بالأعلى لتوليد اللوكيشن تلقائياً، أو اكتبه هنا")
     
     product_details = ""
-    if st.session_state.want_m: product_details += f"• شربت مانجو وكركمين [الكمية: {st.session_state.qty_m} كوب]\n"
-    if st.session_state.want_s: product_details += f"• شربت فراولة ورمان [الكمية: {st.session_state.qty_s} كوب]\n"
-    if not st.session_state.want_m and not st.session_state.want_s: product_details = "• العربة فارغة!\n"
+    if st.session_state.want_m: 
+        product_details += f"• شربت مانجو وكركمين [الكمية: {st.session_state.qty_m} كوب]\n"
+    if st.session_state.want_s: 
+        product_details += f"• شربت فراولة ورمان [الكمية: {st.session_state.qty_s} كوب]\n"
+    if not st.session_state.want_m and not st.session_state.want_s: 
+        product_details = "• العربة فارغة!\n"
 
     msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان واللوكيشن:\n{customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
     
     st.markdown("#### 🚀 تنفيذ الطلب السريع:")
     btn_col1, btn_col2 = st.columns(2)
-    with btn_col1: st.link_button("📱 إرسال الطلب عبر الواتساب", f"https://wa.me/201090416662?text={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
-    with btn_col2: st.link_button("📧 إرسال الطلب عبر الإيميل", f"mailto:sheroway78@gmail.com?subject=Order&body={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
+    with btn_col1: 
+        st.link_button("📱 إرسال الطلب عبر الواتساب", f"https://wa.me/201090416662?text={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
+    with btn_col2: 
+        st.link_button("📧 إرسال الطلب عبر الإيميل", f"mailto:sheroway78@gmail.com?subject=Order&body={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
 
     st.markdown("<br><br><div style='text-align: center; color: #666677; font-size: 0.9rem; border-top: 1px solid #222232; padding-top: 15px;'>© Octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey 🍦</div>", unsafe_allow_html=True)
