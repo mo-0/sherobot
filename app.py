@@ -23,8 +23,8 @@ st.markdown("""
         direction: rtl !important;
     }
     
-    /* إجبار خط Cairo والسنترة بأمان بدون تخريب حاويات الخرائط أو الـ Iframes */
-    h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p {
+    /* إجبار خط Cairo والسنترة على جميع المكونات والنصوص */
+    h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p, .stMarkdown div, .stMarkdown span {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
         color: #ffffff !important;
@@ -52,21 +52,21 @@ st.markdown("""
         border-radius: 12px;
     }
 
-    /* 🛠️ هندسة التبويبات (Tabs) لتظهر كأزرار بارزة ومحاذاتها بشكل صحيح */
+/* 🛠️ الكود الماستر المحدث لتنسيق ونزول التبويبات (Tabs) لأسفل ومنع اختفائها */
     div[data-testid="stTabs"] {
-        margin-top: 65px !important;
+        margin-top: 65px !important; /* دفع حاوية التبويبات بالكامل لأسفل لتبتعد عن شريط المتصفح العلوي */
     }
 
     div[data-testid="stTabs"] [data-baseweb="tab-list"] {
         display: flex !important;
-        justify-content: flex-start !important;
+        justify-content: flex-start !important; /* السماح بالترتيب المرن بداخل الحاوية */
         gap: 8px !important;
         background-color: #111116 !important;
         padding: 10px !important;
         border-radius: 16px !important;
         border: 1px solid #1f1f2e !important;
         width: 100% !important;
-        overflow-x: auto !important;
+        overflow-x: auto !important; /* تفعيل السحب الأفقي المريح على الموبايل لمنع قص التابات */
         white-space: nowrap !important;
     }
     
@@ -84,12 +84,14 @@ st.markdown("""
         transition: all 0.3s ease !important;
     }
     
+    /* تأثير منور عند مرور الماوس */
     div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
         color: #ffffff !important;
         border-color: #f39c12 !important;
         background-color: #1c1c28 !important;
     }
     
+    /* الستايل الاحترافي للتبويب النشط والمختار حالياً */
     div[data-testid="stTabs"] [aria-selected="true"] {
         color: #0d0d11 !important;
         background-color: #f39c12 !important;
@@ -97,21 +99,16 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* 🌍 حل مشكلة عمى واختفاء الخريطة الجغرافية وتأمين الـ Render المستقر */
-    .stFolium, .stFolium iframe, [data-testid="stMarkdownContainer"] iframe, .folium-map {
+/* 🌍 الكود الماستر والنهائي لإظهار الخريطة ومنع المساحة الرمادية */
+    .stFolium, .stFolium iframe, [data-testid="stMarkdownContainer"] iframe {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         width: 100% !important;
         height: 400px !important;
         margin: 0 auto !important;
+        text-align: left !important; /* إجبار الخريطة على عدم التأثر بالسنترة العامة للموقع */
     }
-    
-    /* إلغاء السنترة الإجبارية بداخل حاوية الخريطة لتعمل الأكواد التفاعلية بسلاسة */
-    .stFolium *, .folium-map * {
-        text-align: left !important;
-    }
-
     /* صناديق ومربعات التأصيل العلمي المتراصة */
     .science-box {
         background: linear-gradient(145deg, #14141c, #1a1a26) !important;
@@ -264,6 +261,7 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
+    # المربعات الثلاثة الثابتة
     st.markdown("<br>", unsafe_allow_html=True)
     t1, t2, t3 = st.columns(3, gap="medium")
     with t1:
@@ -276,15 +274,18 @@ with tab1:
     st.markdown("<br><hr style='border-color:#222232;'><br>", unsafe_allow_html=True)
     st.markdown("<h2 style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
     
+# تقسيم الصفحة لنصفين متساويين للمنتجين (Split Screen) وحذف المربعات الفارغة نهائياً
     col_right, col_left = st.columns(2, gap="large")
     
-    with col_right:
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
-        st.markdown("<h3>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>", unsafe_allow_html=True)
+    with col_right: # عبوة المانجو (على اليمين)
+        # 🛠️ حشر وتثبيت عنوان شربت المانجو بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
+        st.markdown("<div class='card-top-header'><h3>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3></div>", unsafe_allow_html=True)
+        
         st.markdown("""
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center; margin-top:10px;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
             <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
         """, unsafe_allow_html=True)
+        
         try: st.image("mango_pack.png", use_container_width=True)
         except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم mango_pack.png")
         
@@ -297,13 +298,15 @@ with tab1:
             st.session_state.want_m = True; st.toast("🎯 تم إضافة شربت المانجو لعربتك بنجاح!"); st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with col_left:
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
-        st.markdown("<h3>🍓 شربت الفراولة والرمان الطبيعي</h3>", unsafe_allow_html=True)
+    with col_left: # عبوة الفراولة (على الشمال)
+        # 🛠️ حشر وتثبيت عنوان شربت الفراولة بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
+        st.markdown("<div class='card-top-header'><h3>🍓 شربت الفراولة والرمان الطبيعي</h3></div>", unsafe_allow_html=True)
+        
         st.markdown("""
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center; margin-top:10px;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
             <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
         """, unsafe_allow_html=True)
+        
         try: st.image("strawberry_pack.png", use_container_width=True)
         except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم strawberry_pack.png")
         
@@ -355,7 +358,7 @@ with tab2:
     <div class='science-box'>
         <span class='sub-heading'>🧪 المركبات النشطة حيوياً والفوائد الصحية الموثقة</span>
         <p style='font-size:15px; line-height:1.8; text-align:right;'>
-            <b>🥭 توليفة شربت المانجو والكركمين (التوليفة الذهبية لتعزيز المناعة):</b><br>
+            <b>?? توليفة شربت المانجو والكركمين (التوليفة الذهبية لتعزيز المناعة):</b><br>
             • <b>المانجيفيرين:</b> مضاد أكسدة قوي مستخلص طبيعياً من ثمار المانجو.<br>
             • <b>الكركمينويدات:</b> المركب الفعال والنشط في الكركم بخصائصه الفريدة المضادة للالتهابات.<br>
             • <b>فيتامين C والكاروتينات:</b> لتعزيز نضارة الخلايا وحمايتها من الإجهاد التأكسدي، مع تكامل حيوي بين بروتينات الشرش والكركمين لزيادة معدل الامتصاص.<br><br>
@@ -368,7 +371,7 @@ with tab2:
     """, unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي
+# التبويب الثالث: الشات الذكي (مُحدث بالكامل ومعاد ربطه برامجيًا)
 # ==========================================
 with tab3:
     st.markdown("### 💬 SheroBot - مستشارك الذكي")
@@ -379,8 +382,7 @@ with tab3:
     user_avatar_url = "https://cdn-icons-png.flaticon.com/512/1144/1144709.png"
 
     for message in st.session_state.chat_history:
-        current_avatar = bot_avatar_url if message["role"] == "assistant" else user_avatar_url
-        with st.chat_message(message["role"], avatar=current_avatar): 
+        with st.chat_message(message["role"], avatar=(bot_avatar_url if message["role"] == "assistant" else user_avatar_url)):
             st.markdown(message["text"])
 
     if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا..."):
@@ -447,7 +449,7 @@ with tab4:
             icon=folium.Icon(color="orange", icon="info-sign")
         ).add_to(m)
         
-    # استدعاء الخريطة بالتوزيعة البرمجية المظبوطة
+    # استدعاء الخريطة بالتوزيعة البرمجية المرنة والمظبوطة هندسياً بالملي
     map_data = st_folium(m, height=400, use_container_width=True)
     
     if map_data and map_data.get("last_clicked"):
