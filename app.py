@@ -52,16 +52,19 @@ st.markdown("""
         border-radius: 12px;
     }
 
-/* 🛠️ هندسة التبويبات (Tabs) الجديدة كلياً لتظهر كأزرار تفاعلية بارزة ومفهومة للجميع */
-    div[data-testid="stTabs"] {
-        width: 100% !important;
-        margin-top: 25px !important;
+/* 🛠️ الكود الجديد والمضمون لتنسيق التبويبات (Tabs) لتظهر كأزرار بارزة */
+    div[data-testid="stTabs"] [data-baseweb="tab-list"] {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 8px !important;
         background-color: #111116 !important;
-        padding: 8px !important;
+        padding: 10px !important;
         border-radius: 16px !important;
         border: 1px solid #1f1f2e !important;
+        width: 100% !important;
     }
-    div[data-testid="stTabs"] button {
+    
+    div[data-testid="stTabs"] [data-baseweb="tab"] {
         font-family: 'Cairo', sans-serif !important;
         font-size: 15px !important;
         font-weight: 700 !important;
@@ -70,24 +73,33 @@ st.markdown("""
         border: 1px solid #222232 !important;
         border-radius: 10px !important;
         padding: 12px 20px !important;
-        margin: 0 4px !important;
         flex-grow: 1 !important;
         text-align: center !important;
-        transition: all 0.3s ease-in-out !important; /* حركة ناعمة عند الانتقال أو الوقوف */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+        transition: all 0.3s ease !important;
     }
-    /* تأثير منور عند تمرير الماوس لتنبيه المستخدم أن التبويب قابل للضغط */
-    div[data-testid="stTabs"] button:hover {
+    
+    /* تأثير مرور الماوس */
+    div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
         color: #ffffff !important;
         border-color: #f39c12 !important;
         background-color: #1c1c28 !important;
     }
-    /* ستايل التبويب النشط والمختار حالياً باللون الأصفر */
-    div[data-testid="stTabs"] button[aria-selected="true"] {
+    
+    /* التبويب النشط والمختار حالياً */
+    div[data-testid="stTabs"] [aria-selected="true"] {
         color: #0d0d11 !important;
-        background-color: #f39c12 !important; /* لون البراند الأصفر الزاهي */
+        background-color: #f39c12 !important;
         border-color: #f39c12 !important;
         font-weight: 900 !important;
+    }
+
+    /* 🌍 حل مشكلة اختفاء الخريطة وإجبارها على الظهور */
+    .stFolium, div[data-testid="stMarkdownContainer"] iframe, .folium-map {
+        width: 100% !important;
+        height: 400px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     /* صناديق ومربعات التأصيل العلمي المتراصة */
     .science-box {
