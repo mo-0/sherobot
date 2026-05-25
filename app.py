@@ -244,7 +244,7 @@ with tab1:
     
     with col_right: # عبوة المانجو (على اليمين)
         # 🛠️ حشر وتثبيت عنوان شربت المانجو بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
-        st.markdown("<div class='card-top-header'><h3 style='white-space: nowrap'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div class='card-top-header'><h3>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3></div>", unsafe_allow_html=True)
         
         st.markdown("""
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center; margin-top:10px;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
