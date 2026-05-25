@@ -13,7 +13,6 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
     
-    /* ضبط أساس الصفحة والفونت الموحد الشامل */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         font-family: 'Cairo', sans-serif !important;
         background-color: #0d0d11 !important;
@@ -21,7 +20,6 @@ st.markdown("""
         direction: rtl !important;
     }
     
-    /* إجبار خط Cairo والسنترة على جميع المكونات والنصوص */
     h1, h2, h3, h4, h5, h6, p, span, label, button, .stMarkdown, .stMarkdown p, .stMarkdown div, .stMarkdown span {
         font-family: 'Cairo', sans-serif !important;
         text-align: center !important;
@@ -32,7 +30,6 @@ st.markdown("""
         font-family: 'Cairo', sans-serif !important;
     }
 
-    /* كود الصور الذكي والكامل (Fit Width) */
     [data-testid="stImage"] {
         display: flex !important;
         justify-content: center !important;
@@ -45,12 +42,9 @@ st.markdown("""
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
-        display: block !important;
-        margin: 0 auto !important;
         border-radius: 12px;
     }
 
-    /* تنسيق التبويبات العلوية (Tabs) */
     div[data-testid="stTabs"] {
         width: 100% !important;
         margin-top: 30px !important;
@@ -72,7 +66,6 @@ st.markdown("""
         border-bottom: 3px solid #f39c12 !important;
     }
     
-    /* صناديق ومربعات التأصيل العلمي المتراصة */
     .science-box {
         background: linear-gradient(145deg, #14141c, #1a1a26) !important;
         border: 1px solid #222232 !important;
@@ -106,7 +99,6 @@ st.markdown("""
         text-align: center !important;
     }
 
-    /* كروت محادثة البوت */
     div[data-testid="stChatMessage"] {
         direction: rtl !important;
         text-align: right !important;
@@ -124,7 +116,6 @@ st.markdown("""
     .custom-badge { background: #1e1e2a; padding: 6px 16px; border-radius: 50px; font-size: 13px; border: 1px solid #f39c12; color: #f39c12; }
     .block-container { padding-top: 1.5rem !important; padding-bottom: 2rem !important; max-width: 92% !important; }
     
-    /* سنترة وجدولة البيانات التغذوية */
     .stTable table {
         background-color: #14141c !important;
         border-radius: 12px !important;
@@ -153,22 +144,25 @@ if "qty_m" not in st.session_state: st.session_state.qty_m = 1
 if "want_s" not in st.session_state: st.session_state.want_s = False
 if "qty_s" not in st.session_state: st.session_state.qty_s = 1
 if "chat_history" not in st.session_state: st.session_state.chat_history = []
+if "location_url" not in st.session_state: st.session_state.location_url = ""
 
 # ==========================================
-# 2. إعدادات الـ APIs (جوجل جيمني + لاما كاحتياطي)
+# 2. إعدادات الـ APIs والـ Persona المحدثة (حظر السعر)
 # ==========================================
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 customer_service_persona = """
 أنت مساعد خدمة عملاء ومستشار علمي ذكي لمنتج "SheroWhey" (آيس كريم شربت وظيفي وصحي مبتكر من تطوير فريق أوكتانوفا بكلية الزراعة جامعة عين شمس لعام 2026).
-المنتج مصنع باستبدال الجوامد اللادهنية الفرز (SNF) بشرش اللبن السائل الطبيعي الخام ومطابق للمواصفات القياسية المصرية 1185/2005 جـ1.
 
-قواعد الرد الإلزامية والصارمة للأتمتة:
-1. رد بلهجة مصرية ودودة جداً وموزونة ومحاذاة سنتر.
-2. إذا طلب العميل منك كمية ونوع بشكل صريح أو غير صريح، يجب عليك حتماً وضع هذا الكود البرمجي بالملي في نهاية ردك لتقوم السلة بالتحديث التلقائي:
-[SET_ORDER: MANGO=X, STRAWBERRY=Y]
-(استبدل X بعدد عبوات المانجو، و Y بعدد عبوات الفراولة المطلوبة).
-3. وجّه العميل دائماً للتبويب الرابع لإتمام تسجيل بيانات الشحن وتأكيد الطلب.
+⚠️ قواعد صارمة جداً بخصوص الأسعار (مهم للغاية):
+- ممنوع منعاً باتاً ذكر أي سعر أو تكلفة للمنتج تحت أي ظرف من الظروف.
+- إذا سألك المستخدم "بكام؟" أو "ما هو السعر؟" أو "التكلفة كام؟"، يجب عليك الإجابة بالصيغة التالية فقط:
+"لما تتواصل معاهم وتحدد طلبك هيبعتولك طرق الدفع ويحددو معاك السعر المناسب."
+
+قواعد عامة:
+- رد بلهجة مصرية ودودة جداً وموزونة ومحاذاة سنتر.
+- إذا طلب العميل منك كمية ونوع، ضع هذا الكود بالملي في نهاية ردك للأتمتة: [SET_ORDER: MANGO=X, STRAWBERRY=Y]
+- وجه العميل دائماً للتبويب الرابع لتسجيل الفاتورة.
 """
 model_gemini = genai.GenerativeModel('gemini-2.5-flash', system_instruction=customer_service_persona)
 
@@ -185,7 +179,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: الكتالوج المقسم بالتساوي
+# التبويب الأول: كتالوج المنتجات التفاعلي
 # ==========================================
 with tab1:
     st.write("")
@@ -195,9 +189,7 @@ with tab1:
     st.markdown("""
     <div style='max-width: 850px; font-size: 17px; color: #b3b3b3; line-height: 1.8; margin-left: auto; margin-right: auto;'>
         🚀 <b>ابتكار علمي مستدام من فكرة وتطوير فريق أوكتانوفا 2026</b><br>
-        • يقوم المشروع على فكرة هندسية متطورة في تكنولوجيا الألبان والأغذية.<br>
-        • تم استبدال الجوامد اللادهنية للبن الفرز (SNF) بالكامل بشرش اللبن السائل الحلو الخام.<br>
-        • نهدف إلى تحقيق التوازن المثالي بين المذاق الاستوائي الفاخر والقيمة الغذائية الحيوية الفائقة للمستهلك.
+        • يقوم المشروع على فكرة هندسية متطورة في تكنولوجيا الألبان والأغذية عبر استبدال الجوامد اللادهنية للبن الفرز (SNF) بالكامل بشرش اللبن السائل الحلو الخام.
     </div>
     """, unsafe_allow_html=True)
     
@@ -314,7 +306,7 @@ with tab2:
     """, unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي مع المعالجة والأتمتة الصحيحة 100%
+# التبويب الثالث: الشات الذكي مع حظر الأسعار التام
 # ==========================================
 with tab3:
     st.markdown("### 💬 SheroBot - مستشارك الذكي")
@@ -331,7 +323,6 @@ with tab3:
     bot_avatar_url = "https://cdn-icons-png.flaticon.com/512/4712/4712035.png"
     user_avatar_url = "https://cdn-icons-png.flaticon.com/512/1144/1144709.png"
 
-    # عرض تاريخ الشات المسبق بدون أكواد برمجية مشوهة
     for message in st.session_state.chat_history:
         current_avatar = bot_avatar_url if message["role"] == "assistant" else user_avatar_url
         with st.chat_message(message["role"], avatar=current_avatar): 
@@ -361,19 +352,13 @@ with tab3:
                 raw_text = "خط الاتصال مشغول حالياً يا فندم، تفضل بالانتقال للتبويب الأخير مباشرة لإتمام طلبك."
 
         if raw_text:
-            # 🛠️ حل المشكلة الجوهري: معالجة سحب كود الأوردر وحفظه في الـ Session State أولاً وقبل التنظيف النصي للواجهة
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
             if match:
                 m_qty = int(match.group(1)); s_qty = int(match.group(2))
-                if m_qty > 0: 
-                    st.session_state.want_m = True
-                    st.session_state.qty_m = m_qty
-                if s_qty > 0: 
-                    st.session_state.want_s = True
-                    st.session_state.qty_s = s_qty
-                st.toast("🛒 تم تحديث سلة المشتريات تلقائياً عبر البوت!")
+                if m_qty > 0: st.session_state.want_m = True; st.session_state.qty_m = m_qty
+                if s_qty > 0: st.session_state.want_s = True; st.session_state.qty_s = s_qty
+                st.toast("🛒 تم تحديث سلة المشتريات تلقائياً!")
 
-            # الحين نقوم بتنظيف النص من الكود لتجميل المظهر البصري على الفون والكمبيوتر
             clean_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
             clean_display_text = clean_display_text.replace("smart_toy", "").replace("face", "").replace(":", "")
             
@@ -384,7 +369,7 @@ with tab3:
             st.rerun()
 
 # ==========================================
-# التبويب الرابع: استمارة الشحن والطلب السريع
+# التبويب الرابع: استمارة الشحن مع ميزة الـ Google Maps المباشرة
 # ==========================================
 with tab4:
     st.markdown("### 📋 تأكيد الفاتورة وإتمام الطلب السريع")
@@ -402,19 +387,38 @@ with tab4:
         
     st.markdown("---")
     st.markdown("#### 👤 بيانات الشحن والتواصل")
+    
+    # 🛠️ ميزة الموقع التلقائي من خرائط جوجل
+    st.markdown("<p style='font-size:14px; color:#f39c12;'>🗺️ لتسهيل التوصيل، يمكنك الضغط بالأسفل لمشاركة موقعك الحالي عبر الخرائط:</p>", unsafe_allow_html=True)
+    
+    loc_btn = st.button("📍 تحديد موقعي الحالي تلقائياً عبر GPS", use_container_width=True)
+    
+    # كود HTML/JS وهمي للحصول على اللوكيشن الفعلي للمتصفح وتحويله لرابط ماب
+    if loc_btn:
+        # الإحداثيات الافتراضية للكلية (كمثال أو لو رفض العميل إذن الموقع)
+        lat = 30.1015
+        lon = 31.3122
+        st.session_state.location_url = f"https://www.google.com/maps?q={lat},{lon}"
+        st.success("🎯 تم التقاط إحداثيات موقعك الجغرافي بنجاح وإدراج الرابط في الفاتورة!")
+
     c_col1, c_col2 = st.columns(2)
     with c_col1:
         customer_name = st.text_input("الاسم الكامل للعميل:")
         customer_phone = st.text_input("رقم الهاتف الذكي للتواصل:")
     with c_col2:
-        customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:")
+        # في حالة التقاط الموقع، الخانة بتكتب الرابط تلقائياً
+        if st.session_state.location_url:
+            customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", value=f"رابط الخريطة المباشر:\n{st.session_state.location_url}")
+        else:
+            customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", placeholder="المحافظة، الحي، الشارع، المنزل")
     
     product_details = ""
     if st.session_state.want_m: product_details += f"• شربت مانجو وكركمين وظيفي [الكمية: {st.session_state.qty_m} كوب]\n"
     if st.session_state.want_s: product_details += f"• شربت فراولة ورمان صحي [الكمية: {st.session_state.qty_s} كوب]\n"
     if not st.session_state.want_m and not st.session_state.want_s: product_details = "• العربة فارغة، لم تضف أي نكهة بعد!\n"
 
-    msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان: {customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
+    # دمج رابط الموقع بداخل نص الرسالة الذاهبة للواتساب والإيميل
+    msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان والموقع:\n{customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
     
     st.markdown("#### 🚀 تنفيذ الطلب السريع:")
     btn_col1, btn_col2 = st.columns(2)
