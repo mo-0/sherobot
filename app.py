@@ -99,7 +99,7 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* 🌍 صيانة وتأمين ظهور الخريطة التفاعلية بكامل طاقتها *//* 🌍 الكود الماستر والنهائي لإظهار الخريطة ومنع المساحة الرمادية */
+/* 🌍 الكود الماستر والنهائي لإظهار الخريطة ومنع المساحة الرمادية */
     .stFolium, .stFolium iframe, [data-testid="stMarkdownContainer"] iframe {
         display: block !important;
         visibility: visible !important;
@@ -442,7 +442,7 @@ with tab4:
     if st.session_state.clicked_coords:
         folium.Marker(location=st.session_state.clicked_coords, popup="موقع الشحن المختار", icon=folium.Icon(color="orange", icon="info-sign")).add_to(m)
         
-    map_data = st_folium(m, width="100%", height=400)
+   map_data = st_folium(m, width=None, height=400, use_container_width=True)
     if map_data and map_data.get("last_clicked"):
         clicked = map_data["last_clicked"]
         new_coords = [clicked["lat"], clicked["lng"]]
