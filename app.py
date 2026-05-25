@@ -3,6 +3,8 @@ import google.generativeai as genai
 import urllib.parse
 import re
 from openai import OpenAI
+import folium
+from streamlit_folium import st_folium
 
 # ==========================================
 # 1. إعدادات الصفحة والـ CSS الاحترافي الشامل والمرن
@@ -144,10 +146,12 @@ if "qty_m" not in st.session_state: st.session_state.qty_m = 1
 if "want_s" not in st.session_state: st.session_state.want_s = False
 if "qty_s" not in st.session_state: st.session_state.qty_s = 1
 if "chat_history" not in st.session_state: st.session_state.chat_history = []
-if "location_url" not in st.session_state: st.session_state.location_url = ""
+# نقطة ارتكاز الخريطة الابتدائية (القاهرة)
+if "map_center" not in st.session_state: st.session_state.map_center = [30.0444, 31.2357]
+if "clicked_coords" not in st.session_state: st.session_state.clicked_coords = None
 
 # ==========================================
-# 2. إعدادات الـ APIs والـ Persona المحدثة (حظر السعر)
+# 2. إعدادات الـ APIs والـ Persona (حظر الأسعار)
 # ==========================================
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
@@ -179,7 +183,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ==========================================
-# التبويب الأول: كتالوج المنتجات التفاعلي
+# التبويب الأول والثاني (محتوى الكتالوج والتأصيل)
 # ==========================================
 with tab1:
     st.write("")
@@ -203,153 +207,63 @@ with tab1:
 
     st.markdown("<br>", unsafe_allow_html=True)
     t1, t2, t3 = st.columns(3, gap="medium")
-    with t1:
-        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>🎯 رؤيتنا وهدفنا الأساسي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>تطوير منتجات وظيفية تدعم الصحة العامة وتعزز المناعة، لسد الفجوة بين المثلجات التقليدية والمتطلبات الصحية للمستهلك الواعي.</p></div>", unsafe_allow_html=True)
-    with t2:
-        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📈 ثقة المستهلك والأمان الحيوي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>أثبتت الدراسات الميدانية للفريق أن 96% من المستهلكين رحبوا تماماً بفكرة استخدام الشرش في المنتج بمجرد معرفة فوائده البيئية والصحية.</p></div>", unsafe_allow_html=True)
-    with t3:
-        st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📜 المواصفات القياسية المصرية</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>المنتج مصنع ومطور علمياً ومطابق تماماً للمواصفات القياسية المصرية رقم 1185 لسنة 2005 الجزء الأول الخاص بالمثلجات اللبنية وشربت الآيس كريم.</p></div>", unsafe_allow_html=True)
+    with t1: st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>🎯 رؤيتنا وهدفنا الأساسي</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>تطوير منتجات وظيفية تدعم الصحة العامة وتعزز المناعة.</p></div>", unsafe_allow_html=True)
+    with t2: st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📈 ثقة المستهلك</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>أثبتت الدراسات الميدانية للفريق أن 96% من المستهلكين رحبوا بالفكرة.</p></div>", unsafe_allow_html=True)
+    with t3: st.markdown("<div class='science-box' style='max-width:100%;'><strong style='color:#f39c12;'>📜 المواصفات القياسية</strong><p style='font-size:13px; color:#ccc; margin-top:5px;'>المنتج مطابق تماماً للمواصفات القياسية المصرية رقم 1185 لسنة 2005 جـ1.</p></div>", unsafe_allow_html=True)
 
     st.markdown("<br><hr style='border-color:#222232;'><br>", unsafe_allow_html=True)
-    st.markdown("<h2 style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
-    
     col_right, col_left = st.columns(2, gap="large")
     
     with col_right:
         st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
-        st.markdown("""
-            <h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
-            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
-            <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
-        """, unsafe_allow_html=True)
-        try:
-            st.image("mango_pack.png", use_container_width=True)
-        except Exception:
-            st.info("💡 يرجى التأكد من رفع ملف باسم mango_pack.png")
-        
-        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية (حصة 100 جرام):</b>", unsafe_allow_html=True)
-        st.table({
-            "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
-            "الكمية في الحصة": ["117.7 kcal", "1.1 g", "0.11 g", "26.85 g", "0.64 g", "26.8 mg", "173.9 mg", "22.1 mg"]
-        })
+        st.markdown("<h3 style='color:#f39c12; margin-top:0;'>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>", unsafe_allow_html=True)
+        try: st.image("mango_pack.png", use_container_width=True)
+        except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم mango_pack.png")
+        st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون"], "الكمية في الحصة": ["117.7 kcal", "1.1 g"]})
         if st.button("🛍️ إضافة عبوة المانجو", key="add_m_box", use_container_width=True):
-            st.session_state.want_m = True
-            st.toast("🎯 تم إضافة شربت المانجو لعربتك بنجاح!")
-            st.rerun()
+            st.session_state.want_m = True; st.toast("🎯 تم إضافة شربت المانجو!"); st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_left:
         st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
-        st.markdown("""
-            <h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>
-            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
-            <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
-        """, unsafe_allow_html=True)
-        try:
-            st.image("strawberry_pack.png", use_container_width=True)
-        except Exception:
-            st.info("💡 يرجى التأكد من رفع ملف باسم strawberry_pack.png")
-        
-        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية (حصة 92.6 جرام):</b>", unsafe_allow_html=True)
-        st.table({
-            "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
-            "الكمية في الحصة": ["116.42 kcal", "1.02 g", "0.10 g", "26.71 g", "0.87 g", "19.45 mg", "165.01 mg", "20.46 mg"]
-        })
+        st.markdown("<h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>", unsafe_allow_html=True)
+        try: st.image("strawberry_pack.png", use_container_width=True)
+        except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم strawberry_pack.png")
+        st.table({"العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون"], "الكمية في الحصة": ["116.42 kcal", "1.02 g"]})
         if st.button("🛍️ إضافة عبوة الفراولة", key="add_s_box", use_container_width=True):
-            st.session_state.want_s = True
-            st.toast("🎯 تم إضافة شربت الفراولة والرمان لعربتك بنجاح!")
-            st.rerun()
+            st.session_state.want_s = True; st.toast("🎯 تم إضافة شربت الفراولة!"); st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-# ==========================================
-# التبويب الثاني: التأصيل العلمي والاستدامة
-# ==========================================
 with tab2:
-    st.write("")
-    st.markdown("<h2 class='centered-title' style='color:#f39c12; margin-bottom:30px;'>🔬 التأصيل العلمي والهوية الأكاديمية للمشروع</h2>", unsafe_allow_html=True)
-    
-    st.markdown("<b style='color:#f39c12;'>📸 فريق عمل أوكتانوفا 2026 برحاب الكلية</b>", unsafe_allow_html=True)
-    try:
-        st.image("team_photo.jpg", use_container_width=True)
-    except Exception:
-        st.info("💡 يرجى رفع ملف باسم team_photo.jpg لتظهر الصورة بالمنتصف")
-        
-    st.markdown("""
-    <div class='science-box'>
-        <span class='sub-heading'>🏫 الجهة الأكاديمية والبحثية</span>
-        <b>الجامعة:</b> جامعة عين شمس &nbsp;|&nbsp; <b>الكلية:</b> كلية الزراعة<br>
-        <b>القسم:</b> قسم علوم الأغذية ( شعبة الألبان وشعب صناعات الأغذية )
-    </div>
-    <div class='science-box'>
-        <span class='sub-heading'>👥 أعضاء فريق أوكتانوفا (Octanova 2026)</span>
-        <b>شعبة الألبان:</b> مصطفى صبحي | بسام عادل | رجب محمد | فؤاد سيد <br>
-        <b>شعبة صناعات الأغذية:</b> نورهان محمد | مريم طارق | شمس محمود | منة الله عوض
-    </div>
-    <div class='science-box'>
-        <span class='sub-heading'>👨‍🏫 الهيئة الإشرافية العليا للمشروع</span>
-        <b>أ.د. عزة فرحات</b> (أستاذ تكنولوجيا الألبان) &nbsp;|&nbsp; <b>د. نعمة سعيد</b> (مدرس تكنولوجيا الألبان)<br>
-        <b>م.م. حسام الرحماني</b> (مدرس مساعد تكنولوجيا الألبان) &nbsp;|&nbsp; <b>أ. آيه أحمد إسماعيل</b> (معيدة بقسم علوم الأغذية)
-    </div>
-    <div class='science-box'>
-        <span class='sub-heading'>🥛 القيمة الغذائية لشرش اللبن السائل الطبيعي</span>
-        يتميز <b>شرش اللبن السائل الحلو الطبيعي الخام</b> باحتوائه على بروتينات الشرش (Whey Proteins) عالية القيمة الحيوية مثل بيتا-لاكتوجلوبولين وألفا-لاكتالبومين. استخدامه كبديل برامجي للجوامد اللادهنية للبن الفرز (SNF) يمنح الشربت قواماً متماسكاً وناعماً، بالإضافة إلى زيادة الذوبانية والانتشار للمركبات النشطة حيوياً بداخل جسم الإنسان، مما يعزز الاستفادة الفورية من المغذيات الحيوية المضافة.
-    </div>
-    <div class='science-box'>
-        <span class='sub-heading'>🌍 الاستدامة والبيئة (OUR SUSTAINABLE PLANET)</span>
-        يُعد "الشرش السائل" أحد أضخم النواتج الثانوية المتخلفة عن صناعة الجبن، ويمثل التخلص منه دون معالجة عبئاً بيئياً ثقيلاً ومصدراً للتلوث العضوي العالي لشبكات الصرف ومجاري المياه (ارتفاع معامل BOD و COD). نجح الفريق في تدوير هذا التحدي عبر استبدال المكون المائي الكامل والمواد الصلبة اللادهنية (SNF) للبن الفرز في الشربت بالشرش السائل، محققاً صفر نفايات (Zero Waste) ومساهماً في صياغة اقتصاد دائري ومستدام للقطاع الغذائي.
-    </div>
-    <div class='science-box'>
-        <span class='sub-heading'>🧪 المركبات النشطة حيوياً والفوائد الصحية الموثقة</span>
-        <b>مانجو والكركمين الطبيعي (التوليفة الذهبية لتعزيز المناعة):</b> تشتمل التركيبة على مركب <b>المانجيفيرين (Mangiferin)</b> قوي الفعالية المتواجد في بيوريه المانجو، بالتكامل مع الـ<b>كركمينويدات (Curcuminoids)</b> المضافة وفيتامين C والكاروتينات. تعمل هذه التوليفة كمضاد أكسدة جبار لحماية الخلايا ومكافحة الالتهابات، ورفع كفاءة الجهاز المناعي بفضل زيادة الإتاحة الحيوية للكركمين بارتباطه ببروتينات الشرش السائل الطبيعي.<br><br>
-        <b>فراولة وعصير الرمان الطبيعي (إنتعاش وصحة القلب):</b> غنية بصبغات <b>الأنثوسيانين (Anthocyanins)</b> الفعالة في دعم وصيانة سلامة الأوعية الدموية وضبط ضغط الدم، بالإضافة إلى <b>حمض الإيلاجيك (Ellagic Acid)</b> ومجموعة الـ<b>بولي فينولات</b> المضادة للميكروبات والالتهابات، مما يمنح الجسم درعاً واقياً طبيعياً يعوض العناصر والكهرباء الحيوية المفقودة بفضل الشرش الحلو.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<h2 class='centered-title' style='color:#f39c12; text-align:center;'>🔬 التأصيل العلمي والهوية الأكاديمية للمشروع</h2>", unsafe_allow_html=True)
+    try: st.image("team_photo.jpg", use_container_width=True)
+    except Exception: st.info("💡 يرجى رفع ملف باسم team_photo.jpg")
+    st.markdown("<div class='science-box' style='width:100%;'><b>فريق عمل أوكتانوفا 2026 برحاب كلية الزراعة جامعة عين شمس</b></div>", unsafe_allow_html=True)
 
 # ==========================================
-# التبويب الثالث: الشات الذكي مع حظر الأسعار التام
+# التبويب الثالث: الشات الذكي (حظر الأسعار التام)
 # ==========================================
 with tab3:
     st.markdown("### 💬 SheroBot - مستشارك الذكي")
-    
-    chat_control_col1, chat_control_col2, chat_control_col3 = st.columns([1, 1.2, 1])
-    with chat_control_col2:
-        if st.button("🗑️ مسح سجل المحادثة بالكامل", use_container_width=True, key="clear_chat_button"):
-            st.session_state.chat_history = []
-            st.toast("🧹 تم تصفير المحادثة بنجاح!")
-            st.rerun()
+    if st.button("🗑️ مسح سجل المحادثة", key="clear_chat_button"):
+        st.session_state.chat_history = []; st.rerun()
 
-    st.write("")
-    
     bot_avatar_url = "https://cdn-icons-png.flaticon.com/512/4712/4712035.png"
     user_avatar_url = "https://cdn-icons-png.flaticon.com/512/1144/1144709.png"
 
     for message in st.session_state.chat_history:
-        current_avatar = bot_avatar_url if message["role"] == "assistant" else user_avatar_url
-        with st.chat_message(message["role"], avatar=current_avatar): 
+        with st.chat_message(message["role"], avatar=(bot_avatar_url if message["role"] == "assistant" else user_avatar_url)):
             st.markdown(message["text"])
 
     if prompt := st.chat_input("اكتب استفسارك التغذوي أو العلمي هنا..."):
-        with st.chat_message("user", avatar=user_avatar_url): 
-            st.markdown(prompt)
+        st.chat_message("user", avatar=user_avatar_url).markdown(prompt)
         st.session_state.chat_history.append({"role": "user", "text": prompt})
         
-        raw_text = ""
         try:
             response = model_gemini.generate_content(prompt)
             raw_text = response.text
         except Exception:
-            if client_meta is not None:
-                st.toast("⚠️ جاري المزامنة عبر السيرفر الاحتياطي...")
-                try:
-                    meta_response = client_meta.chat.completions.create(
-                        model="llama-3.3-70b-versatile",
-                        messages=[{"role": "system", "content": customer_service_persona}, {"role": "user", "content": prompt}]
-                    )
-                    raw_text = meta_response.choices[0].message.content
-                except Exception:
-                    raw_text = "⚠️ السيرفرات مشغولة حالياً، تفضل بالانتقال للتبويب الأخير لإرسال طلبك فوراً!"
-            else:
-                raw_text = "خط الاتصال مشغول حالياً يا فندم، تفضل بالانتقال للتبويب الأخير مباشرة لإتمام طلبك."
+            raw_text = "خط الاتصال مشغول حالياً يا فندم، تفضل بالانتقال للتبويب الأخير مباشرة لإتمام طلبك."
 
         if raw_text:
             match = re.search(r'\[SET_ORDER:\s*MANGO=(\d+),\s*STRAWBERRY=(\d+)\]', raw_text)
@@ -360,16 +274,11 @@ with tab3:
                 st.toast("🛒 تم تحديث سلة المشتريات تلقائياً!")
 
             clean_display_text = re.sub(r'\[SET_ORDER:.*?\]', '', raw_text)
-            clean_display_text = clean_display_text.replace("smart_toy", "").replace("face", "").replace(":", "")
-            
             st.session_state.chat_history.append({"role": "assistant", "text": clean_display_text})
-
-            with st.chat_message("assistant", avatar=bot_avatar_url): 
-                st.markdown(clean_display_text)
             st.rerun()
 
 # ==========================================
-# التبويب الرابع: استمارة الشحن مع ميزة الـ Google Maps المباشرة
+# التبويب الرابع: استمارة الشحن مع الخريطة التفاعلية الفعالة (حفظ الدبوس)
 # ==========================================
 with tab4:
     st.markdown("### 📋 تأكيد الفاتورة وإتمام الطلب السريع")
@@ -377,48 +286,57 @@ with tab4:
     col_order_m, col_order_s = st.columns(2, gap="large")
     with col_order_m:
         st.checkbox("🥭 عبوة شربت المانجو والكركمين", key="want_m")
-        if st.session_state.want_m: 
-            st.number_input("الكمية المطلوبة (كوب 120 مل):", min_value=1, max_value=100, key="qty_m")
-        
+        if st.session_state.want_m: st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_m")
     with col_order_s:
         st.checkbox("🍓 عبوة شربت الفراولة والرمان", key="want_s")
-        if st.session_state.want_s: 
-            st.number_input("الكمية المطلوبة (كوب 120 مل):", min_value=1, max_value=100, key="qty_s")
+        if st.session_state.want_s: st.number_input("الكمية المطلوبة:", min_value=1, max_value=100, key="qty_s")
         
     st.markdown("---")
-    st.markdown("#### 👤 بيانات الشحن والتواصل")
+    st.markdown("#### 🗺️ حدد موقع التوصيل على الخريطة (اضغط لتثبيت الدبوس)")
     
-    # 🛠️ ميزة الموقع التلقائي من خرائط جوجل
-    st.markdown("<p style='font-size:14px; color:#f39c12;'>🗺️ لتسهيل التوصيل، يمكنك الضغط بالأسفل لمشاركة موقعك الحالي عبر الخرائط:</p>", unsafe_allow_html=True)
+    # بناء وتوليد الخريطة التفاعلية
+    m = folium.Map(location=st.session_state.map_center, zoom_start=11)
     
-    loc_btn = st.button("📍 تحديد موقعي الحالي تلقائياً عبر GPS", use_container_width=True)
+    # إذا كان العميل قد ضغط وحط دبوس بالفعل، نقوم بعرض الدبوس على الخريطة
+    if st.session_state.clicked_coords:
+        folium.Marker(
+            location=st.session_state.clicked_coords,
+            popup="موقع الشحن المختار",
+            icon=folium.Icon(color="orange", icon="info-sign")
+        ).add_to(m)
+        
+    # عرض الخريطة داخل جدار الحماية بـ Streamlit والتقاط إشارة الضغط
+    map_data = st_folium(m, width="100%", height=400)
     
-    # كود HTML/JS وهمي للحصول على اللوكيشن الفعلي للمتصفح وتحويله لرابط ماب
-    if loc_btn:
-        # الإحداثيات الافتراضية للكلية (كمثال أو لو رفض العميل إذن الموقع)
-        lat = 30.1015
-        lon = 31.3122
-        st.session_state.location_url = f"https://www.google.com/maps?q={lat},{lon}"
-        st.success("🎯 تم التقاط إحداثيات موقعك الجغرافي بنجاح وإدراج الرابط في الفاتورة!")
+    # التقاط الإحداثيات عند ضغط المستخدم الفعلي على الخريطة
+    if map_data and map_data.get("last_clicked"):
+        clicked = map_data["last_clicked"]
+        new_coords = [clicked["lat"], clicked["lng"]]
+        if st.session_state.clicked_coords != new_coords:
+            st.session_state.clicked_coords = new_coords
+            st.toast("📌 تم تثبيت دبوس الموقع بنجاح على الخريطة!")
+            st.rerun()
 
+    st.markdown("#### 👤 بيانات الشحن والتواصل")
     c_col1, c_col2 = st.columns(2)
     with c_col1:
         customer_name = st.text_input("الاسم الكامل للعميل:")
-        customer_phone = st.text_input("رقم الهاتف الذكي للتواصل:")
+        customer_phone = st.text_input("رقم الهاتف للتواصل:")
     with c_col2:
-        # في حالة التقاط الموقع، الخانة بتكتب الرابط تلقائياً
-        if st.session_state.location_url:
-            customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", value=f"رابط الخريطة المباشر:\n{st.session_state.location_url}")
+        # توليد الرابط المباشر الذكي بناءً على الدبوس المختار
+        if st.session_state.clicked_coords:
+            lat_val, lng_val = st.session_state.clicked_coords
+            generated_map_url = f"https://www.google.com/maps?q={lat_val},{lng_val}"
+            customer_address = st.text_area("عنوان التوصيل (رابط موقعك الحالي جاهز):", value=f"تم تحديد الموقع عبر الخريطة التفاعلية 📍\nرابط جوجل مابس المباشر لقسم الشحن:\n{generated_map_url}")
         else:
-            customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", placeholder="المحافظة، الحي، الشارع، المنزل")
+            customer_address = st.text_area("عنوان التوصيل بالتفصيل لشحن المنتج:", placeholder="اضغط على الخريطة بالأعلى لتوليد اللوكيشن تلقائياً، أو اكتبه هنا")
     
     product_details = ""
-    if st.session_state.want_m: product_details += f"• شربت مانجو وكركمين وظيفي [الكمية: {st.session_state.qty_m} كوب]\n"
-    if st.session_state.want_s: product_details += f"• شربت فراولة ورمان صحي [الكمية: {st.session_state.qty_s} كوب]\n"
-    if not st.session_state.want_m and not st.session_state.want_s: product_details = "• العربة فارغة، لم تضف أي نكهة بعد!\n"
+    if st.session_state.want_m: product_details += f"• شربت مانجو وكركمين [الكمية: {st.session_state.qty_m} كوب]\n"
+    if st.session_state.want_s: product_details += f"• شربت فراولة ورمان [الكمية: {st.session_state.qty_s} كوب]\n"
+    if not st.session_state.want_m and not st.session_state.want_s: product_details = "• العربة فارغة!\n"
 
-    # دمج رابط الموقع بداخل نص الرسالة الذاهبة للواتساب والإيميل
-    msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان والموقع:\n{customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
+    msg_template = f"🛒 طلب شراء جديد لمنتج SheroWhey\n\n👤 العميل: {customer_name}\n📱 الهاتف: {customer_phone}\n🏠 العنوان واللوكيشن:\n{customer_address}\n\n🍦 تفاصيل الأكواب:\n{product_details}\n✨ إنتاج فريق أوكتانوفا 2026 - كلية الزراعة جامعة عين شمس"
     
     st.markdown("#### 🚀 تنفيذ الطلب السريع:")
     btn_col1, btn_col2 = st.columns(2)
@@ -427,9 +345,4 @@ with tab4:
     with btn_col2: 
         st.link_button("📧 إرسال الطلب عبر الإيميل", f"mailto:sheroway78@gmail.com?subject=Order&body={urllib.parse.quote(msg_template)}", use_container_width=True, disabled=(not st.session_state.want_m and not st.session_state.want_s))
 
-    st.markdown("""
-        <br><br>
-        <div style="text-align: center; color: #666677; font-size: 0.9rem; border-top: 1px solid #222232; padding-top: 15px;">
-            © Octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey 🍦
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<br><br><div style='text-align: center; color: #666677; font-size: 0.9rem; border-top: 1px solid #222232; padding-top: 15px;'>© Octanova 2026 | جميع الحقوق محفوظة لمشروع SheroWhey 🍦</div>", unsafe_allow_html=True)
