@@ -239,42 +239,51 @@ with tab1:
     st.markdown("<br><hr style='border-color:#222232;'><br>", unsafe_allow_html=True)
     st.markdown("<h2 style='font-weight:700; margin-bottom:30px;'>🍨 عبوات وحقائق SheroWhey الغذائية</h2>", unsafe_allow_html=True)
     
+# تقسيم الصفحة لنصفين متساويين للمنتجين (Split Screen) وحذف المربعات الفارغة نهائياً
     col_right, col_left = st.columns(2, gap="large")
     
-    with col_right:
+    with col_right: # عبوة المانجو (على اليمين)
         st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
+        # 🛠️ حشر وتثبيت عنوان شربت المانجو بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
+        st.markdown("<div class='card-top-header'><h3>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3></div>", unsafe_allow_html=True)
+        
         st.markdown("""
-            <h3 style='color:#f39c12; margin-top:0;'> 🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
-            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
+            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center; margin-top:10px;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
             <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
         """, unsafe_allow_html=True)
+        
         try: st.image("mango_pack.png", use_container_width=True)
         except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم mango_pack.png")
         
+        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية الكاملة (حصة 100 جرام | 4 أوز):</b>", unsafe_allow_html=True)
         st.table({
             "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
             "الكمية في الحصة": ["117.7 kcal", "1.1 g", "0.11 g", "26.85 g", "0.64 g", "26.8 mg", "173.9 mg", "22.1 mg"]
         })
         if st.button("🛍️ إضافة عبوة المانجو", key="add_m_box", use_container_width=True):
-            st.session_state.want_m = True; st.toast("🎯 تم إضافة شربت المانجو!"); st.rerun()
+            st.session_state.want_m = True; st.toast("🎯 تم إضافة شربت المانجو لعربتك بنجاح!"); st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with col_left:
+    with col_left: # عبوة الفراولة (على الشمال)
         st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
+        # 🛠️ حشر وتثبيت عنوان شربت الفراولة بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
+        st.markdown("<div class='card-top-header'><h3>🍓 شربت الفراولة والرمان الطبيعي</h3></div>", unsafe_allow_html=True)
+        
         st.markdown("""
-            <h3 style='color:#f39c12; margin-top:0;'>🍓 شربت الفراولة والرمان الطبيعي</h3>
-            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
+            <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center; margin-top:10px;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه فراولة، عصير رمان طبيعي، عسل جلوكوز، كريمة خفق، مواد مثبتة مثخنات قوام (صمغ السليلوز CMC E466)، منظم حموضة (حمض الستريك E330).</p>
             <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
         """, unsafe_allow_html=True)
+        
         try: st.image("strawberry_pack.png", use_container_width=True)
         except Exception: st.info("💡 يرجى التأكد من رفع ملف باسم strawberry_pack.png")
         
+        st.markdown("<b style='color:#f39c12;'>الحقائق الغذائية الرسمية الكاملة (حصة 92.6 جرام | 4 أوز):</b>", unsafe_allow_html=True)
         st.table({
             "العنصر الغذائي": ["السعرات الحرارية", "إجمالي الدهون", "البروتين", "إجمالي الكربوهيدرات", "الرماد", "الكالسيوم", "البوتاسيوم", "فيتامين سي"],
             "الكمية في الحصة": ["116.42 kcal", "1.02 g", "0.10 g", "26.71 g", "0.87 g", "19.45 mg", "165.01 mg", "20.46 mg"]
         })
         if st.button("🛍️ إضافة عبوة الفراولة", key="add_s_box", use_container_width=True):
-            st.session_state.want_s = True; st.toast("🎯 تم إضافة شربت الفراولة والرمان!"); st.rerun()
+            st.session_state.want_s = True; st.toast("🎯 تم إضافة شربت الفراولة والرمان لعربتك بنجاح!"); st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================
