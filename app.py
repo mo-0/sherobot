@@ -99,13 +99,15 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* 🌍 صيانة وتأمين ظهور الخريطة التفاعلية بكامل طاقتها */
-    .stFolium, div[data-testid="stMarkdownContainer"] iframe, .folium-map {
-        width: 100% !important;
-        height: 400px !important;
+    /* 🌍 صيانة وتأمين ظهور الخريطة التفاعلية بكامل طاقتها *//* 🌍 الكود الماستر والنهائي لإظهار الخريطة ومنع المساحة الرمادية */
+    .stFolium, .stFolium iframe, [data-testid="stMarkdownContainer"] iframe {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        width: 100% !important;
+        height: 400px !important;
+        margin: 0 auto !important;
+        text-align: left !important; /* إجبار الخريطة على عدم التأثر بالسنترة العامة للموقع */
     }
     /* صناديق ومربعات التأصيل العلمي المتراصة */
     .science-box {
