@@ -244,7 +244,7 @@ with tab1:
     with col_right:
         st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
         st.markdown("""
-            <h3 style='color:#f39c12; margin-top:0;'> Explicitly 🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
+            <h3 style='color:#f39c12; margin-top:0;'> 🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3>
             <p style='font-size:14px; color:#ccc; line-height:1.5; text-align:center;'><b>المكونات الأصلية:</b> شرش سائل، سكر (سكروز)، بيوريه المانجو، عسل جلوكوز، كريمة خفق، مواد مثبتة (صمغ السليلوز CMC E466)، منظم لون ومضاد أكسدة طبيعي (كركمين E100)، منظم حموضة (حمض الستريك E330).</p>
             <p style='font-size:13px; color:#e74c3c;'>⚠️ تنبيه الحساسية: يحتوي على مكونات الحليب (اللاكتوز والبروتينات) | الحجم: 120 مل</p>
         """, unsafe_allow_html=True)
