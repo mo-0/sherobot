@@ -52,40 +52,46 @@ st.markdown("""
         border-radius: 12px;
     }
 
-/* 🛠️ الكود الجديد والمضمون لتنسيق التبويبات (Tabs) لتظهر كأزرار بارزة */
+/* 🛠️ الكود الماستر المحدث لتنسيق ونزول التبويبات (Tabs) لأسفل ومنع اختفائها */
+    div[data-testid="stTabs"] {
+        margin-top: 65px !important; /* دفع حاوية التبويبات بالكامل لأسفل لتبتعد عن شريط المتصفح العلوي */
+    }
+
     div[data-testid="stTabs"] [data-baseweb="tab-list"] {
         display: flex !important;
-        justify-content: center !important;
+        justify-content: flex-start !important; /* السماح بالترتيب المرن بداخل الحاوية */
         gap: 8px !important;
         background-color: #111116 !important;
         padding: 10px !important;
         border-radius: 16px !important;
         border: 1px solid #1f1f2e !important;
         width: 100% !important;
+        overflow-x: auto !important; /* تفعيل السحب الأفقي المريح على الموبايل لمنع قص التابات */
+        white-space: nowrap !important;
     }
     
     div[data-testid="stTabs"] [data-baseweb="tab"] {
         font-family: 'Cairo', sans-serif !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
         font-weight: 700 !important;
         color: #a0a0ab !important;
         background-color: #161622 !important;
         border: 1px solid #222232 !important;
         border-radius: 10px !important;
-        padding: 12px 20px !important;
+        padding: 10px 16px !important;
         flex-grow: 1 !important;
         text-align: center !important;
         transition: all 0.3s ease !important;
     }
     
-    /* تأثير مرور الماوس */
+    /* تأثير منور عند مرور الماوس */
     div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
         color: #ffffff !important;
         border-color: #f39c12 !important;
         background-color: #1c1c28 !important;
     }
     
-    /* التبويب النشط والمختار حالياً */
+    /* الستايل الاحترافي للتبويب النشط والمختار حالياً */
     div[data-testid="stTabs"] [aria-selected="true"] {
         color: #0d0d11 !important;
         background-color: #f39c12 !important;
@@ -93,7 +99,7 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* 🌍 حل مشكلة اختفاء الخريطة وإجبارها على الظهور */
+    /* 🌍 صيانة وتأمين ظهور الخريطة التفاعلية بكامل طاقتها */
     .stFolium, div[data-testid="stMarkdownContainer"] iframe, .folium-map {
         width: 100% !important;
         height: 400px !important;
