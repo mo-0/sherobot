@@ -243,7 +243,6 @@ with tab1:
     col_right, col_left = st.columns(2, gap="large")
     
     with col_right: # عبوة المانجو (على اليمين)
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
         # 🛠️ حشر وتثبيت عنوان شربت المانجو بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
         st.markdown("<div class='card-top-header'><h3>🥭 شربت المانجو الطبيعي المدعم بالكركمين</h3></div>", unsafe_allow_html=True)
         
@@ -265,7 +264,6 @@ with tab1:
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_left: # عبوة الفراولة (على الشمال)
-        st.markdown("<div class='science-box' style='max-width:100%; margin:0;'>", unsafe_allow_html=True)
         # 🛠️ حشر وتثبيت عنوان شربت الفراولة بداخل حاوية الـ Header الداكنة بالظبط وفي سطر واحد كما طلبت
         st.markdown("<div class='card-top-header'><h3>🍓 شربت الفراولة والرمان الطبيعي</h3></div>", unsafe_allow_html=True)
         
